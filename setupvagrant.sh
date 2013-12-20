@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
-#sudo yum -y install python-pip python-lxml
+sudo yum -y update
+sudo yum -y install java-1.7.0-openjdk java-1.7.0-openjdk-devel
 
 
