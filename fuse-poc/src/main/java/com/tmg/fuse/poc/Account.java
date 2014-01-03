@@ -1,5 +1,4 @@
 package com.tmg.fuse.poc;
-
 public class Account {
 
 	private String Name;
