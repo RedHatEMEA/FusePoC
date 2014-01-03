@@ -1,38 +1,54 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Configures the Camel Context-->
-
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:camel="http://camel.apache.org/schema/spring"
-       xmlns:jaxrs="http://cxf.apache.org/jaxrs"
        xmlns:cxf="http://camel.apache.org/schema/cxf"
-      xsi:schemaLocation="
-       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
-         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
-         http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd
-         http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd">
-       
-       
-       
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+							http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd
+							http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-	<import resource="classpath:META-INF/cxf/cxf.xml" />
-     <import resource="classpath:META-INF/cxf/osgi/cxf-extension-osgi.xml" />
- 
-     <cxf:rsServer id="accountService" address="http://localhost:9090/accountservice" serviceClass="com.tmg.fuse.poc.AccountResource">
-        
-     </cxf:rsServer>
-       
-     
-     
-      
-  <camelContext xmlns="http://camel.apache.org/schema/spring">
-    <route>
-        <description>here is a sample which processes the input files
-         (leaving them in place - see the 'noop' flag)
-         then performs content based routing on the message using XPath</description>
-        <from uri="cxfrs:bean:accountService"/>
-        <to uri="activemq:topic:createAccountTopic"/>
-    </route>
-</camelContext>
+	<!--  Set up the JMS Configuration-->
+	<bean id="jms" class="org.apache.camel.component.jms.JmsComponent"> 
+	  <property name="configuration" ref="jmsConfig" />
+	 </bean>	
+	  
+	<bean id="jmsConfig" class="org.apache.camel.component.jms.JmsConfiguration" >
+	  <property name="connectionFactory" ref="jmsPooledConnectionFactory" /> 
+	  <property name="transacted" value="true" /> 
+	  <property name="transactionManager" ref="jmsTransactionManager" />
+	  <property name="cacheLevelName" value="CACHE_CONSUMER" />
+	 </bean>
+	
+	<bean id="jmsTransactionManager" class="org.springframework.jms.connection.JmsTransactionManager">
+	  <property name="connectionFactory" ref="jmsPooledConnectionFactory" />
+	 </bean>           
+	
+	<bean id="jmsPooledConnectionFactory" class="org.apache.activemq.pool.PooledConnectionFactory"
+	      init-method="start" destroy-method="stop" >
+	  <property name="maxConnections" value="2" />
+	  <property name="connectionFactory" ref="jmsConnectionFactory" />
+	 </bean> 
+	
+	<bean id="jmsConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory"> 
+	  <property name="brokerURL" value="tcp://localhost:61617" /> 
+	  <property name="watchTopicAdvisories" value="false" />
+	</bean>
+	<!--  End of JMS Configuration -->
 
+	<!--  Set up the Rest Resources -->
+    <cxf:rsServer id="rsServer" address="http://localhost:9090/route" serviceClass="com.tmg.fuse.poc.AccountResource"/>
+
+	<!--  Set up beans to assist with POC -->
+    <bean id="accountprocessor" class="com.tmg.fuse.poc.AccountProcessor"/>
+
+	<!-- Camel Context Definition -->
+	<camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+	
+	    <route>
+	        <from uri="cxfrs://http://localhost:9090/route?resourceClasses=com.tmg.fuse.poc.AccountResource"/>
+	        <process ref="accountprocessor" />
+	        <log message="Processed Account Route"/>
+	    </route>
+	
+	
+	</camelContext>
 </beans>
