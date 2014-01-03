@@ -21,15 +21,15 @@ public class AccountResource {
     }
 
     @GET
-    @Path("/account/{id}/")
+    @Path("/retrieveaccount/{id}/")
     @Produces("text/xml")
-    public Account getAccount(@PathParam("id") String id) {
+    public Account retrieveAccount(@PathParam("id") String id) {
         return null;
     }
 
     @PUT
     @Path("/account/")
-    public Response updateAccount(Account account) {
+    public Response createAccount(Account account) {
         return null;
     }
 }

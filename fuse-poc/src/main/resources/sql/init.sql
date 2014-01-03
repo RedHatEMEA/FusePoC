@@ -22,6 +22,6 @@ CREATE TABLE account(
 );
 
 INSERT INTO account (name, xrefId)
-VALUES ('Jon Walton',100);
+VALUES ('Jon Walton',1234);
 INSERT INTO account (name, xrefId)
-VALUES ('Graeme Colman',200);
+VALUES ('Graeme Colman',5678);

@@ -12,6 +12,16 @@
 	<jdbc:embedded-database id="dataSource" type="DERBY">
         <jdbc:script location="classpath:sql/init.sql"/>
     </jdbc:embedded-database>
+    
+    <cxf:cxfEndpoint id="crmEndpoint"
+                   address="http://localhost:9000/crm/"
+                   serviceClass="com.tmg.fuse.poc.CRMEndpoint"/>
+                   
+    
+    <cxf:cxfEndpoint id="pspEndpoint"
+                   address="http://localhost:9001/psp/"
+                   serviceClass="com.tmg.fuse.poc.PSPEndpoint"/>
+    
 
 	<!--  Set up the JMS Configuration-->
 	<bean id="jms" class="org.apache.camel.component.jms.JmsComponent"> 
@@ -49,13 +59,45 @@
 
 	<!-- Camel Context Definition -->
 	<camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
-	
-	    <route>
-	        <from uri="cxfrs://http://localhost:9090/route?resourceClasses=com.tmg.fuse.poc.AccountResource"/>
-	        <process ref="accountprocessor" />
-	        <log message="Processed Account Route"/>
-	    </route>
-	
-	
-	</camelContext>
+    <route>
+        <from uri="cxfrs://http://localhost:9090/route?resourceClasses=com.tmg.fuse.poc.AccountResource"/>
+        <process ref="accountprocessor"/>
+        <log message="Executing SQL: ${body}"/>
+        <to uri="jdbc:dataSource"/>
+        <choice>
+            <when>
+                <simple>${in.header.operationName} regex 'retrieveAccount'</simple>
+                <log message="Retrieving account from CRM"/>
+                <to uri="xslt:xsl/transformToCRM.xsl"/>
+            </when>
+            <when>
+                <simple>${in.header.operationName} regex 'createAccount'</simple>
+                <log message="Putting createAccount message on topic"/>
+                <to uri="activemq:topic:accountTopic"/>
+            </when>
+            <otherwise>
+            	<log message="Incorrect request"/>
+            </otherwise>
+        </choice>
+    </route>
+    
+    <route>
+      <!-- route starts from the cxf webservice, see camel-cxf.xml for details -->
+      <from uri="cxf:bean:crmEndpoint" />
+      <to uri="seda:incomingOrders" />
+      <!-- and then create the OK reply for the webservice which is still waiting for a reply -->
+      <transform>
+        <constant>OK</constant>
+      </transform>
+    </route>
+  
+    <!-- test route -->
+    <route>
+      <from uri="seda:incomingOrders" />
+      <to uri="mock:end"/>
+    </route>
+    
+    
+    
+</camelContext>
 </beans>
