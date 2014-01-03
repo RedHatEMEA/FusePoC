@@ -20,3 +20,8 @@ CREATE TABLE account(
   name VARCHAR(100) DEFAULT NULL,
   xrefId INT DEFAULT NULL
 );
+
+INSERT INTO account (name, xrefId)
+VALUES ('Jon Walton',100);
+INSERT INTO account (name, xrefId)
+VALUES ('Graeme Colman',200);
