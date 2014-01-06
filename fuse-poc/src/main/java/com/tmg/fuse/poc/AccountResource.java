@@ -21,7 +21,7 @@ public class AccountResource {
     }
 
     @GET
-    @Path("/retrieveaccount/{id}/")
+    @Path("/account/{id}/")
     @Produces("text/xml")
     public Account retrieveAccount(@PathParam("id") String id) {
         return null;
