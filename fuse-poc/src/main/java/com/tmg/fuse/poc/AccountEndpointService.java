@@ -16,24 +16,42 @@
  */
 package com.tmg.fuse.poc;
 
-import com.tmg.fuse.poc.account.InputAccount;
-import com.tmg.fuse.poc.account.OutputAccount;
-import com.tmg.fuse.poc.account.AccountEndpoint;
+//import com.tmg.fuse.poc.account.InputAccount;
+import javax.xml.bind.JAXBElement;
+
+import com.tmg.fuse.poc.account.AccountDetails;
+import com.tmg.fuse.poc.account.AccountServicePortType;
+import com.tmg.fuse.poc.account.Result;
 
 /**
  * This is the implementation of the real web service
  *
  * @version 
  */
-public class AccountEndpointService implements AccountEndpoint {
+public class AccountEndpointService implements AccountServicePortType {
 
-    public OutputAccount account(InputAccount in) {
-        // just log and return a fixed response
-        System.out.println("\n\n\nInvoked real web service");
+	@Override
+	public AccountDetails getAccount(String tsNumber) {
+		// TODO Auto-generated method stub
+		AccountDetails a = new AccountDetails();
+		
+		a.setCity("Birmingham");
+		a.setCountry("UK");
+		return a;
+	}
+	
 
-        OutputAccount out = new OutputAccount();
-        out.setCode("OK;");
-        return out;
-    }
+	@Override
+	public Result updateAccount(AccountDetails accountDetails) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
+	@Override
+	public Result createAccount(AccountDetails accountDetails) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
 }

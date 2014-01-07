@@ -8,35 +8,34 @@
 							http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
 							http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-3.0.xsd">
 
+	<!--  *************************  -->
+	<!--  JDBC Configuration	     -->
+	<!--  *************************  -->	
 
 	<jdbc:embedded-database id="dataSource" type="DERBY">
         <jdbc:script location="classpath:sql/init.sql"/>
     </jdbc:embedded-database>
     
-    <!-- this is the CXF web service we use as the front end -->
+    
+	<!--  *************************  -->
+	<!--  CXF Endpoint Configuration -->
+	<!--  *************************  -->	    
   <cxf:cxfEndpoint id="account"
                    address="http://localhost:9001/proxy-crm"
-                   endpointName="s:AccountEndpoint"
-                   serviceName="s:AccountEndpointService"
-                   wsdlURL="etc/account.wsdl"
+                   endpointName="s:AccountService"
+                   serviceName="s:AccountServiceService"
+                   serviceClass="com.tmg.fuse.poc.AccountEndpointService"
+                   wsdlURL="etc/currentCRMService.wsdl"
                    xmlns:s="http://account.poc.fuse.tmg.com"/>
     
-    
-	
-	<!-- Use a bean to start and stop the real web service (is not Camel specific) -->
-  	<!-- In a real use-case the real web service would be the real CRM service running on another server
-       but we simulate this in the same JVM -->
-	<bean id="realWebService" class="com.tmg.fuse.poc.RealCRMWebServiceBean"
-        init-method="start" destroy-method="stop">
-    	<!-- url of the real web service we have proxied -->
-    	<property name="url" value="http://localhost:9000/real-crm-service"/>
-  	</bean>
-	
-	<!-- bean that enriches the SOAP request -->
-  	<bean id="XRefIdToSOAPBean" class="com.tmg.fuse.poc.XRefIdToSOAPBean"/>
-  
-  
-	<!--  Set up the JMS Configuration-->
+	<!--  *************************  -->
+	<!--  JMS Configuration          -->
+	<!--  *************************  -->	
+
+	<bean id="activemq" class="org.apache.activemq.camel.component.ActiveMQComponent">
+      <property name="brokerURL" value="vm:tmgAMQBroker"/>
+   	</bean>
+ 
 	<bean id="jms" class="org.apache.camel.component.jms.JmsComponent"> 
 	  <property name="configuration" ref="jmsConfig" />
 	 </bean>	
@@ -59,64 +58,145 @@
 	 </bean> 
 	
 	<bean id="jmsConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory"> 
-	  <property name="brokerURL" value="tcp://localhost:61617" /> 
+	  <property name="brokerURL" value="vm:tmgAMQBroker" /> 
 	  <property name="watchTopicAdvisories" value="false" />
 	</bean>
-	<!--  End of JMS Configuration -->
+	 
+	
+	<!--  ************************* -->
+	<!--  Set up Error Handlers -->
+	<!--  ************************* -->	
+	<bean id="accountTopicErrorHandler" class="org.apache.camel.builder.DeadLetterChannelBuilder">
+       <property name="deadLetterUri" value="activemq:accountTopicDLQ"/>
+       <property name="redeliveryPolicy" ref="accountTopicRedeliveryPolicyConfig"/>
+   </bean>
+ 
+   <!-- here we set the redelivery settings -->
+	<bean id="accountTopicRedeliveryPolicyConfig" class="org.apache.camel.processor.RedeliveryPolicy">
+       <property name="maximumRedeliveries" value="3"/>
+       <property name="redeliveryDelay" value="250"/>
+   </bean>
 
+	<!--  ************************* -->
 	<!--  Set up the Rest Resources -->
+	<!--  ************************* -->
+
     <cxf:rsServer id="rsServer" address="http://localhost:9090/route" serviceClass="com.tmg.fuse.poc.AccountResource"/>
 
-	
 
-	<!-- Camel Context Definition -->
+	<!--  *******************************  -->
+	<!--  Set up Beans to assist with POC  -->
+	<!--  *******************************  -->	
+	
+	<!-- Use a bean to start and stop the real web service (is not Camel specific) -->
+  	<!-- In a real use-case the real web service would be the real CRM service running on another server but we simulate this in the same JVM -->
+	<bean id="realWebService" class="com.tmg.fuse.poc.RealCRMWebServiceBean"
+        init-method="start" destroy-method="stop">
+    	<!-- url of the real web service we have proxied -->
+    	<property name="url" value="http://localhost:9000/real-crm-service"/>
+  	</bean>
+	
+	<!-- bean that enriches the SOAP request -->
+  	<bean id="retrieveAccount" class="com.tmg.fuse.poc.RetrieveAccountProcessor"/>
+  
+    <bean id="accountprocessor" class="com.tmg.fuse.poc.AccountProcessor"/>
+	<bean id="guidEnrichStrategy" class="com.tmg.fuse.poc.GUIDAggregationStrategy"/>
+	
+	
+	<bean id="camelTracer" class="org.apache.camel.processor.interceptor.Tracer">
+	    <property name="traceExceptions" value="true"/>
+	    <property name="traceInterceptors" value="true"/>
+	    <property name="logLevel" value="INFO"/>
+	    <property name="logName" value="com.mycompany.messages"/>
+	</bean>
+	
+	<!--  ************************* -->
+	<!--  Camel Context Definition  -->
+	<!--  ************************* -->
+	
 	<camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
-	
-	<endpoint id="callRealCRMWebService" uri="http://localhost:9000/real-crm-service?throwExceptionOnFailure=false"/>
- 	
-	
-    <route>
-        <from uri="cxfrs://http://localhost:9090/route?resourceClasses=com.tmg.fuse.poc.AccountResource"/>
-        <log message="Retrieved request for operation: ${header.operationName}"/>
+	    
+	    <endpoint id="callRealCRMWebService" uri="http://localhost:9000/real-crm-service?throwExceptionOnFailure=false"/>
+	   
+
+		<!--  *************************  -->
+		<!--  REST to Topic Camel Route  -->
+		<!--  *************************  -->	
+	    <route streamCache="true" errorHandlerRef="accountTopicErrorHandler">
+	        <from uri="cxfrs://bean://rsServer"/>
+        	<log message="Retrieved request for operation: ${header.operationName}"/>
         
-        <choice>
-            <when>
-                <simple>${header.operationName} == 'retrieveAccount'</simple>
-                <log message="Retrieving account from CRM"/>
-                <setBody>
-		        	<simple>select xrefId from account where id = ${body}</simple>
-		        </setBody>
-		        <enrich uri="jdbc:dataSource"/>
-                <to uri="bean:XRefIdToSOAPBean"/>
-                <log message="Calling CRM service"/>
-                <to uri="cxf:bean:account?dataFormat=MESSAGE"/>
-             
-            </when>
-            <when>
-                <simple>${header.operationName} == 'createAccount'</simple>
-                <log message="Putting createAccount message on topic"/>
-                <to uri="activemq:topic:accountTopic"/>
-            </when>
-            <otherwise>
-            	<log message="Request unavailable"/>
-            </otherwise>
-        </choice>
-             
-    </route>
-    
-    
-    <!-- Dummy route for the CRM backend service. Has a cxf proxy service infront of the real one -->
-    <route streamCache="true">
-      <!-- CXF consumer using MESSAGE format -->
-      <from uri="cxf:bean:account?dataFormat=MESSAGE"/>
-      <!-- log input received -->
-      <to uri="log:input"/>
-      <!-- send proxied request to real web service -->
-      <to ref="callRealCRMWebService"/>
-      <!-- log answer from real web service -->
-      <to uri="log:output?showStreams=true"/>
-    </route>
-    
-    
-</camelContext>
+        	<choice>
+           	    <when>
+               		<simple>${in.header.operationName} == 'retrieveAccount'</simple>
+               		<log message="Retrieving account from CRM"/>
+               		<setBody>
+		            	<simple>select xrefId from account where id = ${body}</simple>
+		        	</setBody>
+	        		<enrich uri="jdbc:dataSource"/>
+               		<to uri="bean:retrieveAccount"/>
+               		<log message="Calling CRM service"/>
+               		<to uri="cxf:bean:account?dataFormat=POJO"/>
+                   </when>                  
+           	    <when>	
+               		<simple>${in.header.operationName} == 'createAccount'</simple>
+               		<process ref="accountprocessor"/>
+                	<enrich uri="direct:guidEnricher" strategyRef="guidEnrichStrategy"/>	                                
+                	<log message="Putting createAccount message on topic ${body}"/>	            
+                	<inOnly uri="activemq:topic:accountTopic?disableReplyTo=true"/>	  	    	                     
+	            </when>
+	            <otherwise>
+	            	<log message="Request unavailable"/>           	
+	            </otherwise>
+	        </choice>
+	    </route>
+		
+		<!-- Error route for account route  --> 
+		<route>
+			<from uri="activemq:accountTopicDLQ"/>
+			<log message="MESSAGE READ FROM accountTopicDLQ ERROR QUEUE ${body}" />
+		</route>
+		 
+		 
+		<!-- Route to enrich the create account message with a GUID from the database -->
+		<route>
+			<from uri="direct:guidEnricher"/>
+			<setBody>
+        		<simple>values next value for seq_xrefId</simple>
+        	</setBody>
+        	<to uri="jdbc:dataSource"/> 
+		</route>
+    	<!--  ******************************  -->
+		<!--  Topic to CRM Camel Route  -->
+		<!--  ******************************  -->	
+	    
+	    <route>
+	    	<from uri="activemq:topic:accountTopic"/>
+	    	<log message="CRM CONSUMED - ${body}"/>
+	    </route>
+	     
+ 		<!--  ******************************  -->
+		<!--  Topic to PSP Camel Route  -->
+		<!--  ******************************  -->	   
+    	
+    	<route>
+	    	<from uri="activemq:topic:accountTopic"/>
+	    	<log message="PSP CONSUMED - ${body}"/>
+	    </route>
+		    
+ 		<!--  *****************************************************************************************  -->
+		<!--   Dummy route for the CRM backend service. Has a cxf proxy service infront of the real one  -->
+		<!--  *****************************************************************************************  -->	   
+  	  	<!-- Dummy route for the CRM backend service. Has a cxf proxy service infront of the real one -->
+    	<route streamCache="true">
+      		<!-- CXF consumer using MESSAGE format -->
+      		<from uri="cxf:bean:account?dataFormat=MESSAGE"/>
+      		<!-- log input received -->
+      		<to uri="log:input"/>
+      		<!-- send proxied request to real web service -->
+      		<to ref="callRealCRMWebService"/>
+      		<!-- log answer from real web service -->
+      		<to uri="log:output?showStreams=true"/>
+   	 	</route>
+	</camelContext>
 </beans>

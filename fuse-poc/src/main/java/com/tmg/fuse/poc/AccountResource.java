@@ -28,7 +28,8 @@ public class AccountResource {
     }
 
     @PUT
-    @Path("/account/")
+    @Path("/account")
+    @Produces("text/xml")
     public Response createAccount(Account account) {
         return null;
     }
