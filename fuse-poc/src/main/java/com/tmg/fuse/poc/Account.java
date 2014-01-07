@@ -1,37 +1,52 @@
 package com.tmg.fuse.poc;
-public class Account {
 
-	private String Name;
-	private String ID;
+import java.io.Serializable;
+
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+
+@XmlRootElement(name = "Account")
+public class Account implements Serializable{
+
+	private static final long serialVersionUID = 1L;
 	
-	public Account(){
+	//@XmlElement(name = "name", required = true)
+	private String name;
+	//@XmlElement(name = "accountID", required = true)
+	private String accountID;
+	
+	public Account(){	
 		
 	}
 
 	
-	
-	public Account(String name, String iD) {
+	public Account(String name, String id) {
 		super();
-		Name = name;
-		ID = iD;
+		this.name = name;
+		this.accountID = id;
 	}
-
 
 
 	public String getName() {
-		return Name;
+		return name;
 	}
 
 	public void setName(String name) {
-		Name = name;
+		this.name = name;
 	}
 
-	public String getID() {
-		return ID;
+	public String getAccountID() {
+		return accountID;
 	}
 
-	public void setID(String iD) {
-		ID = iD;
+	public void setAccountID(String id) {
+		accountID = id;
+	}
+
+
+	@Override
+	public String toString() {
+		return "Account [name=" + name + ", accountId=" + accountID + "]";
 	}
 	
 	
