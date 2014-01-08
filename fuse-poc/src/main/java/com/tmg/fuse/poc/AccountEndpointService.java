@@ -33,10 +33,30 @@ public class AccountEndpointService implements AccountServicePortType {
 	@Override
 	public AccountDetails getAccount(String tsNumber) {
 		// TODO Auto-generated method stub
-		AccountDetails a = new AccountDetails();
+		AccountDetails a = new AccountDetails();	
 		
 		a.setCity("Birmingham");
 		a.setCountry("UK");
+		a.setAccountType("-");
+		a.setCounty("-");
+		a.setDigitalSubscriberStatus("-");
+		a.setFirstName("Jon");
+		a.setGUID("-");
+		a.setHomePhone("0000");
+		a.setLastName("Walton");
+		a.setMarketingEmailPref(true);
+		a.setMarketingPhonePref(true);
+		a.setMarketingPostPref(true);
+		a.setMarketingSMSPref(true);
+		a.setMobilePhone("0000");
+		a.setPersonalEmail("email");
+		a.setPostalCode("-");
+		a.setStreet("-");
+		a.setTCode("-");
+		a.setTitle("Mr");
+		a.setTSNumber("-");
+		
+		
 		return a;
 	}
 	

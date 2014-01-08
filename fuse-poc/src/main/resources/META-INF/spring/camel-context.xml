@@ -20,13 +20,17 @@
 	<!--  *************************  -->
 	<!--  CXF Endpoint Configuration -->
 	<!--  *************************  -->	    
-  <cxf:cxfEndpoint id="account"
+  	<cxf:cxfEndpoint id="account"
                    address="http://localhost:9001/proxy-crm"
                    endpointName="s:AccountService"
                    serviceName="s:AccountServiceService"
                    serviceClass="com.tmg.fuse.poc.AccountEndpointService"
                    wsdlURL="etc/currentCRMService.wsdl"
-                   xmlns:s="http://account.poc.fuse.tmg.com"/>
+                   xmlns:s="http://account.poc.fuse.tmg.com">
+    	<cxf:properties>
+	        <entry key="dataFormat" value="CXF_MESSAGE"/>
+	    </cxf:properties>
+    </cxf:cxfEndpoint>
     
 	<!--  *************************  -->
 	<!--  JMS Configuration          -->
@@ -104,22 +108,33 @@
     <bean id="accountprocessor" class="com.tmg.fuse.poc.AccountProcessor"/>
 	<bean id="guidEnrichStrategy" class="com.tmg.fuse.poc.GUIDAggregationStrategy"/>
 	
-	
+	<!-- 
 	<bean id="camelTracer" class="org.apache.camel.processor.interceptor.Tracer">
 	    <property name="traceExceptions" value="true"/>
 	    <property name="traceInterceptors" value="true"/>
 	    <property name="logLevel" value="INFO"/>
 	    <property name="logName" value="com.mycompany.messages"/>
 	</bean>
-
+ -->
+	
 	
 	<!--  ************************* -->
 	<!--  Camel Context Definition  -->
 	<!--  ************************* -->
 	
 	<camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
-	    
+	
+		<!--  ************************* -->
+		<!--  Endpoint for real CRM service  -->
+		<!--  ************************* -->
 	    <endpoint id="callRealCRMWebService" uri="http://localhost:9000/real-crm-service?throwExceptionOnFailure=false"/>
+	
+		<!--  ************************* -->
+		<!--  Data Formats Definitions  -->
+		<!--  ************************* -->
+		<dataFormats>
+		    <json id="json"/>
+		</dataFormats>
 	   
 
 		<!--  *************************  -->
@@ -141,6 +156,7 @@
                		<to uri="bean:retrieveAccount"/>
                		<log message="Calling CRM service"/>
                		<to uri="cxf:bean:account?dataFormat=POJO"/>
+               		<to uri="direct:marshalToJson"/>
                    </when>                  
            	    <when>	
                		<simple>${in.header.operationName} == 'createAccount'</simple>
@@ -187,16 +203,24 @@
 	    	<from uri="activemq:topic:accountTopic"/>
 	    	<log message="PSP CONSUMED - ${body}"/>
 	    </route>
+	    
+	    
+	    <route streamCache="true">
+		    <from uri="direct:marshalToJson"/>
+		    <to uri="log:input?showStreams=true"/>
+		    <marshal ref="json"/>
+		    <to uri="mock:json" />
+		    <to uri="log:output?showStreams=true"/>
+		</route>
 
  		<!--  *****************************************************************************************  -->
 		<!--   Dummy route for the CRM backend service. Has a cxf proxy service infront of the real one  -->
 		<!--  *****************************************************************************************  -->	   
-  	  	<!-- Dummy route for the CRM backend service. Has a cxf proxy service infront of the real one -->
     	<route streamCache="true">
       		<!-- CXF consumer using MESSAGE format -->
       		<from uri="cxf:bean:account?dataFormat=MESSAGE"/>
       		<!-- log input received -->
-      		<to uri="log:input"/>
+      		<to uri="log:input?showStreams=true"/>
       		<!-- send proxied request to real web service -->
       		<to ref="callRealCRMWebService"/>
       		<!-- log answer from real web service -->
