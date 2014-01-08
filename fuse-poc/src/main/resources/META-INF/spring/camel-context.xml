@@ -31,18 +31,11 @@
 	<!--  *************************  -->
 	<!--  JMS Configuration          -->
 	<!--  *************************  -->	
-<<<<<<< HEAD
 
 	<bean id="activemq" class="org.apache.activemq.camel.component.ActiveMQComponent">
       <property name="brokerURL" value="vm:tmgAMQBroker"/>
    	</bean>
- 
-=======
-	<bean id="activemq" class="org.apache.activemq.camel.component.ActiveMQComponent">
-      <property name="brokerURL" value="vm:tmgAMQBroker"/>
-   	</bean>
 
->>>>>>> 7bdaae4ae37043dc1f6527b0a9e3cf8db152be0d
 	<bean id="jms" class="org.apache.camel.component.jms.JmsComponent"> 
 	  <property name="configuration" ref="jmsConfig" />
 	 </bean>	
@@ -68,11 +61,8 @@
 	  <property name="brokerURL" value="vm:tmgAMQBroker" /> 
 	  <property name="watchTopicAdvisories" value="false" />
 	</bean>
-<<<<<<< HEAD
+
 	 
-=======
-	
->>>>>>> 7bdaae4ae37043dc1f6527b0a9e3cf8db152be0d
 	
 	<!--  ************************* -->
 	<!--  Set up Error Handlers -->
@@ -98,7 +88,7 @@
 	<!--  *******************************  -->
 	<!--  Set up Beans to assist with POC  -->
 	<!--  *******************************  -->	
-<<<<<<< HEAD
+
 	
 	<!-- Use a bean to start and stop the real web service (is not Camel specific) -->
   	<!-- In a real use-case the real web service would be the real CRM service running on another server but we simulate this in the same JVM -->
@@ -121,22 +111,7 @@
 	    <property name="logLevel" value="INFO"/>
 	    <property name="logName" value="com.mycompany.messages"/>
 	</bean>
-=======
-	
-	<!-- Use a bean to start and stop the real web service (is not Camel specific) -->
-  	<!-- In a real use-case the real web service would be the real CRM service running on another server but we simulate this in the same JVM -->
-	<bean id="realWebService" class="com.tmg.fuse.poc.RealCRMWebServiceBean"
-        init-method="start" destroy-method="stop">
-    	<!-- url of the real web service we have proxied -->
-    	<property name="url" value="http://localhost:9000/real-crm-service"/>
-  	</bean>
-	
-	<!-- bean that enriches the SOAP request -->
-  	<bean id="XRefIdToSOAPBean" class="com.tmg.fuse.poc.XRefIdToSOAPBean"/>
-  
-    <bean id="accountprocessor" class="com.tmg.fuse.poc.AccountProcessor"/>
-	<bean id="guidEnrichStrategy" class="com.tmg.fuse.poc.GUIDAggregationStrategy"/>
->>>>>>> 7bdaae4ae37043dc1f6527b0a9e3cf8db152be0d
+
 	
 	<!--  ************************* -->
 	<!--  Camel Context Definition  -->
@@ -150,7 +125,7 @@
 		<!--  *************************  -->
 		<!--  REST to Topic Camel Route  -->
 		<!--  *************************  -->	
-<<<<<<< HEAD
+
 	    <route streamCache="true" errorHandlerRef="accountTopicErrorHandler">
 	        <from uri="cxfrs://bean://rsServer"/>
         	<log message="Retrieved request for operation: ${header.operationName}"/>
@@ -173,29 +148,6 @@
                 	<enrich uri="direct:guidEnricher" strategyRef="guidEnrichStrategy"/>	                                
                 	<log message="Putting createAccount message on topic ${body}"/>	            
                 	<inOnly uri="activemq:topic:accountTopic?disableReplyTo=true"/>	  	    	                     
-=======
-	    <route errorHandlerRef="accountTopicErrorHandler">
-	        <from uri="cxfrs://bean://rsServer"/>
-	        <log message="Retrieved request for operation: ${header.operationName}"/>
-	        <choice>
-	            <when>
-                	<simple>${header.operationName} == 'retrieveAccount'</simple>
-                	<log message="Retrieving account from CRM"/>
-                	<setBody>
-		        		<simple>select xrefId from account where id = ${body}</simple>
-		        	</setBody>
-		        	<enrich uri="jdbc:dataSource"/>
-                	<to uri="bean:XRefIdToSOAPBean"/>
-                	<log message="Calling CRM service"/>
-                	<to uri="cxf:bean:account?dataFormat=MESSAGE"/>
-	            </when>
-	            <when>
-	                <simple>${in.header.operationName} regex 'createAccount'</simple>
-	               	<process ref="accountprocessor"/>
-	                <enrich uri="direct:guidEnricher" strategyRef="guidEnrichStrategy"/>	                                
-	                <log message="Putting createAccount message on topic ${body}"/>	            
-	                <inOnly uri="activemq:topic:accountTopic?disableReplyTo=true"/>	   	                     
->>>>>>> 7bdaae4ae37043dc1f6527b0a9e3cf8db152be0d
 	            </when>
 	            <otherwise>
 	            	<log message="Request unavailable"/>           	
@@ -203,21 +155,13 @@
 	        </choice>
 	    </route>
 		
-<<<<<<< HEAD
+
 		<!-- Error route for account route  --> 
-=======
-		<!-- Error route for account route  -->
->>>>>>> 7bdaae4ae37043dc1f6527b0a9e3cf8db152be0d
 		<route>
 			<from uri="activemq:accountTopicDLQ"/>
 			<log message="MESSAGE READ FROM accountTopicDLQ ERROR QUEUE ${body}" />
 		</route>
-<<<<<<< HEAD
-		 
-		 
-=======
-		
->>>>>>> 7bdaae4ae37043dc1f6527b0a9e3cf8db152be0d
+
 		<!-- Route to enrich the create account message with a GUID from the database -->
 		<route>
 			<from uri="direct:guidEnricher"/>
@@ -226,43 +170,24 @@
         	</setBody>
         	<to uri="jdbc:dataSource"/> 
 		</route>
-<<<<<<< HEAD
-    	<!--  ******************************  -->
-		<!--  Topic to CRM Camel Route  -->
-		<!--  ******************************  -->	
-	    
-=======
-
 
 		<!--  ******************************  -->
 		<!--  Topic to CRM Camel Route  -->
 		<!--  ******************************  -->	
->>>>>>> 7bdaae4ae37043dc1f6527b0a9e3cf8db152be0d
 	    <route>
 	    	<from uri="activemq:topic:accountTopic"/>
 	    	<log message="CRM CONSUMED - ${body}"/>
 	    </route>
-<<<<<<< HEAD
-	     
- 		<!--  ******************************  -->
-		<!--  Topic to PSP Camel Route  -->
-		<!--  ******************************  -->	   
-    	
-=======
+
     
  		<!--  ******************************  -->
 		<!--  Topic to PSP Camel Route  -->
 		<!--  ******************************  -->	   
->>>>>>> 7bdaae4ae37043dc1f6527b0a9e3cf8db152be0d
     	<route>
 	    	<from uri="activemq:topic:accountTopic"/>
 	    	<log message="PSP CONSUMED - ${body}"/>
 	    </route>
-<<<<<<< HEAD
-		    
-=======
-    
->>>>>>> 7bdaae4ae37043dc1f6527b0a9e3cf8db152be0d
+
  		<!--  *****************************************************************************************  -->
 		<!--   Dummy route for the CRM backend service. Has a cxf proxy service infront of the real one  -->
 		<!--  *****************************************************************************************  -->	   
@@ -278,8 +203,5 @@
       		<to uri="log:output?showStreams=true"/>
    	 	</route>
 	</camelContext>
-<<<<<<< HEAD
+
 </beans>
-=======
-</beans>
->>>>>>> 7bdaae4ae37043dc1f6527b0a9e3cf8db152be0d
