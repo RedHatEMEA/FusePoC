@@ -4,5 +4,9 @@
 *.jar
 *.war
 *.ear
+*.log
 .setupvagrant.sh.swp
 .vagrant
+/fuse-poc/target
+.metadata
+/fuse-poc/activemq-data
