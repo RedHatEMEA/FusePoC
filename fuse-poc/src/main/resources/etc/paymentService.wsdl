@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions targetNamespace="http://psp.poc.fuse.tmg.com"
+xmlns="http://schemas.xmlsoap.org/wsdl/" 
+xmlns:ns1="http://schemas.xmlsoap.org/soap/http" 
+xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" 
+xmlns:tns="http://psp.poc.fuse.tmg.com" 
+xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" 
+xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <wsdl:types>
+    <xs:schema elementFormDefault="qualified" targetNamespace="http://psp.poc.fuse.tmg.com">
+      <xs:element name="createAccount" type="tns:createAccount"/>
+      <xs:element name="createAccountResponse" type="tns:createAccountResponse"/>
+      <xs:element name="createEwallet" type="tns:createEwallet"/>
+      <xs:element name="createEwalletResponse" type="tns:createEwalletResponse"/>
+      <xs:element name="createOrder" type="tns:createOrder"/>
+      <xs:element name="createOrderResponse" type="tns:createOrderResponse"/>
+      <xs:element name="getAccount" type="tns:getAccount"/>
+      <xs:element name="getAccountResponse" type="tns:getAccountResponse"/>
+      <xs:element name="updateAccount" type="tns:updateAccount"/>
+      <xs:element name="updateAccountResponse" type="tns:updateAccountResponse"/>
+      <xs:element name="updateEwallet" type="tns:updateEwallet"/>
+      <xs:element name="updateEwalletResponse" type="tns:updateEwalletResponse"/>
+      <xs:complexType name="createEwallet">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="arg0" type="xs:string"/>
+          <xs:element minOccurs="0" name="arg1" type="tns:paymentInstrument"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType final="extension restriction" name="paymentInstrument">
+        <xs:complexContent>
+          <xs:extension base="tns:tmgEntity">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="cardHolderName" type="xs:string"/>
+              <xs:element minOccurs="0" name="cardNumber" type="xs:string"/>
+              <xs:element minOccurs="0" name="cvvNumber" type="xs:string"/>
+              <xs:element name="expiryMonth" type="xs:int"/>
+              <xs:element name="expiryYear" type="xs:int"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="tmgEntity">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="tmgId" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createEwalletResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:response"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="response">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="responseStatus" type="tns:status"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="status">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="exception" type="xs:string"/>
+          <xs:element minOccurs="0" name="statusCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="statusDetail" type="xs:string"/>
+          <xs:element minOccurs="0" name="statusMessage" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createAccount">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="arg0" type="tns:account"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="account">
+        <xs:complexContent>
+          <xs:extension base="tns:tmgEntity">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="billingAddress" type="tns:address"/>
+              <xs:element minOccurs="0" name="ewallet" type="tns:ewallet"/>
+              <xs:element minOccurs="0" name="firstName" type="xs:string"/>
+              <xs:element minOccurs="0" name="lastName" type="xs:string"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="address">
+        <xs:complexContent>
+          <xs:extension base="tns:tmgEntity">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="addressLine1" type="xs:string"/>
+              <xs:element minOccurs="0" name="addressLine2" type="xs:string"/>
+              <xs:element minOccurs="0" name="city" type="xs:string"/>
+              <xs:element minOccurs="0" name="country" type="xs:string"/>
+              <xs:element minOccurs="0" name="county" type="xs:string"/>
+              <xs:element minOccurs="0" name="postCode" type="xs:string"/>
+              <xs:element minOccurs="0" name="state" type="xs:string"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="ewallet">
+        <xs:complexContent>
+          <xs:extension base="tns:tmgEntity">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="accountId" type="xs:string"/>
+              <xs:element minOccurs="0" name="balance" type="xs:decimal"/>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="payInstruments" nillable="true" type="tns:paymentInstrument"/>
+              <xs:element minOccurs="0" name="primaryInstrumentId" type="xs:string"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="createAccountResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:response"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateEwallet">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="arg0" type="xs:string"/>
+          <xs:element minOccurs="0" name="arg1" type="tns:paymentInstrument"/>
+          <xs:element name="arg2" type="xs:boolean"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateEwalletResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:response"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateAccount">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="arg0" type="tns:account"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateAccountResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:response"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrder">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="arg0" type="tns:order"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="order">
+        <xs:complexContent>
+          <xs:extension base="tns:tmgEntity">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="accountId" type="xs:string"/>
+              <xs:element minOccurs="0" name="amount" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="billingFrequency" type="xs:string"/>
+              <xs:element minOccurs="0" name="orderLastModifiedDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="orderStatus" type="xs:string"/>
+              <xs:element minOccurs="0" name="ordercreatedDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="productId" type="xs:string"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="createOrderResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:response"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="getAccount">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="arg0" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="getAccountResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:accountResponse"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="accountResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:response">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="account" type="tns:account"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+    </xs:schema>
+  </wsdl:types>
+  <wsdl:message name="updateEwalletResponse">
+    <wsdl:part element="tns:updateEwalletResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="getAccountResponse">
+    <wsdl:part element="tns:getAccountResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="createOrder">
+    <wsdl:part element="tns:createOrder" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="createEwalletResponse">
+    <wsdl:part element="tns:createEwalletResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="getAccount">
+    <wsdl:part element="tns:getAccount" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="createAccountResponse">
+    <wsdl:part element="tns:createAccountResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="updateAccountResponse">
+    <wsdl:part element="tns:updateAccountResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="updateAccount">
+    <wsdl:part element="tns:updateAccount" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="createEwallet">
+    <wsdl:part element="tns:createEwallet" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="createAccount">
+    <wsdl:part element="tns:createAccount" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="createOrderResponse">
+    <wsdl:part element="tns:createOrderResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="updateEwallet">
+    <wsdl:part element="tns:updateEwallet" name="parameters"/>
+  </wsdl:message>
+  <wsdl:portType name="PaymentService">
+    <wsdl:operation name="createEwallet">
+      <wsdl:input message="tns:createEwallet" name="createEwallet"/>
+      <wsdl:output message="tns:createEwalletResponse" name="createEwalletResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="createAccount">
+      <wsdl:input message="tns:createAccount" name="createAccount"/>
+      <wsdl:output message="tns:createAccountResponse" name="createAccountResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="updateEwallet">
+      <wsdl:input message="tns:updateEwallet" name="updateEwallet"/>
+      <wsdl:output message="tns:updateEwalletResponse" name="updateEwalletResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="updateAccount">
+      <wsdl:input message="tns:updateAccount" name="updateAccount"/>
+      <wsdl:output message="tns:updateAccountResponse" name="updateAccountResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="createOrder">
+      <wsdl:input message="tns:createOrder" name="createOrder"/>
+      <wsdl:output message="tns:createOrderResponse" name="createOrderResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="getAccount">
+      <wsdl:input message="tns:getAccount" name="getAccount"/>
+      <wsdl:output message="tns:getAccountResponse" name="getAccountResponse"/>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="PaymentServiceImplServiceSoapBinding" type="tns:PaymentService">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="createAccount">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createAccount">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createAccountResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createEwallet">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createEwallet">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createEwalletResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateEwallet">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="updateEwallet">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="updateEwalletResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateAccount">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="updateAccount">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="updateAccountResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createOrder">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createOrder">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createOrderResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getAccount">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="getAccount">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="getAccountResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="PaymentServiceImplService">
+    <wsdl:port binding="tns:PaymentServiceImplServiceSoapBinding" name="PaymentServiceImplPort">
+      <soap:address location="http://localhost:9001/proxy-psp/"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

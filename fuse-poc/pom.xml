@@ -249,6 +249,12 @@
 			        <bindingFile>${basedir}/src/main/resources/etc/bindings.txt</bindingFile>
 			      </bindingFiles>
                 </wsdlOption>
+                <wsdlOption>
+                  <wsdl>${basedir}/src/main/resources/etc/paymentService.wsdl</wsdl>
+                  <bindingFiles>
+			        <bindingFile>${basedir}/src/main/resources/etc/bindings.txt</bindingFile>
+			      </bindingFiles>
+                </wsdlOption>
               </wsdlOptions>
             </configuration>
             <goals>
