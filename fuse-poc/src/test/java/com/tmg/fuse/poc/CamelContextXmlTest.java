@@ -26,25 +26,28 @@ public class CamelContextXmlTest extends CamelSpringTestSupport {
 	@Test
 	public void testGetAccount() throws Exception {
 		
+		// Add an interceptor to catch the response back to the mock client
+		// Unmarshall the JSON and pass on to the mock endpoint
 		RouteDefinition route = context.getRouteDefinitions().get(0);          
 		route.adviceWith(context, new RouteBuilder() {              
 			public void configure() throws Exception {             
 				interceptSendToEndpoint("mock:client")
 				.to("log:input")
 				.unmarshal("xstream")
-				.to("log:xxxxxxxxxxxunmarshalled")
 				.to(outputEndpoint);        
 				}     
 			});
 		
+		// Call the REST endpoint
 		WebClient client = WebClient.create(ENDPOINT_ADDRESS);
 		client.accept("application/json");
 		client.path("/accountservice/account/1");
-		
 		Response r = client.get();
 		
+		// Retrieve the message body and cast to AccountDetails
 		AccountDetails a = (AccountDetails)outputEndpoint.getExchanges().get(0).getIn().getBody();
 		
+		// Assert the values of the obect
 		assertEquals("Birmingham", a.getCity());
 		assertEquals("UK", a.getCountry());
 	}
