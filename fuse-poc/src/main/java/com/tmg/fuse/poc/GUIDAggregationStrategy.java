@@ -14,25 +14,6 @@ public class GUIDAggregationStrategy implements AggregationStrategy {
         String ID = "";
         
         
-/*        if(null != resource.getIn().getBody() && resource.getIn().getBody() instanceof ArrayList) {
-        	
-        	ArrayList al = (ArrayList)resource.getIn().getBody();
-        	
-        	if(al.size() >0) {
-        		ID = ((LinkedHashMap)al.get(0)).get("1").toString();
-        	}        	
-        } else {
-        	System.out.println("GUIDAggregatorStrategy: No sequence number returned from the query");
-        	
-        }
-        
-        if(account != null) {
-        	
-        	account.setAccountID(ID);
-        	original.getOut().setBody(account);
-        	
-        }*/
-        
         //Just let all exceptions bubble through to the caller....well, it is a POC!
         
         //Grab the sequence number from the first element of the hashList object if the DB result arrayList!

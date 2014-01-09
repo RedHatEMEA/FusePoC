@@ -34,4 +34,12 @@ public class AccountResource {
     public Response createAccount(Account account) {
         return null;
     }
+
+    @PUT
+    @Path("/updateAccount")
+    @Produces("text/xml")
+    public Response updateAccount(Account account) {
+        return null;
+    }
+
 }

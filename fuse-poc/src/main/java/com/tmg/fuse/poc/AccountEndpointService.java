@@ -22,6 +22,7 @@ import javax.xml.bind.JAXBElement;
 import com.tmg.fuse.poc.account.AccountDetails;
 import com.tmg.fuse.poc.account.AccountServicePortType;
 import com.tmg.fuse.poc.account.Result;
+import com.tmg.fuse.poc.account.util.WSError;
 
 /**
  * This is the implementation of the real web service
@@ -55,8 +56,7 @@ public class AccountEndpointService implements AccountServicePortType {
 		a.setTCode("-");
 		a.setTitle("Mr");
 		a.setTSNumber("-");
-		
-		
+
 		return a;
 	}
 	
@@ -64,13 +64,26 @@ public class AccountEndpointService implements AccountServicePortType {
 	@Override
 	public Result updateAccount(AccountDetails accountDetails) {
 		// TODO Auto-generated method stub
+		System.out.println("[[UPDATE ACCOUNT] - Set account.name =" +accountDetails.getFirstName() +"]" );
 		return null;
 	}
 
 	@Override
 	public Result createAccount(AccountDetails accountDetails) {
 		// TODO Auto-generated method stub
-		return null;
+		Result result = new Result();
+		result.setTSNumber("A1011111");
+		WSError error = new WSError();
+		error.setErrorCode("null");
+		error.setErrorMessage("null");
+		result.setWsError(error);
+		if(accountDetails.getFirstName().equalsIgnoreCase("crmfail")) {
+			WSError e = new WSError();
+			e.setErrorCode(accountDetails.getGUID());
+			e.setErrorMessage("Create account filed for XREF " +accountDetails.getGUID() +" - This test error was caused by the create account request message firstname = 'fail'");
+			result.setWsError(e);
+		}
+		return result;
 	}
 
 	

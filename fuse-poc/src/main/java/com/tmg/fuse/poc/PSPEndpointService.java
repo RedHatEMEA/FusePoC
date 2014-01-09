@@ -17,12 +17,17 @@
 package com.tmg.fuse.poc;
 
 
+import org.eclipse.jetty.server.Authentication.ResponseSent;
+
+import com.tmg.fuse.poc.account.Result;
+import com.tmg.fuse.poc.account.util.WSError;
 import com.tmg.fuse.poc.psp.Account;
 import com.tmg.fuse.poc.psp.AccountResponse;
 import com.tmg.fuse.poc.psp.Order;
 import com.tmg.fuse.poc.psp.PaymentInstrument;
 import com.tmg.fuse.poc.psp.PaymentService;
 import com.tmg.fuse.poc.psp.Response;
+import com.tmg.fuse.poc.psp.Status;
 
 /**
  * This is the implementation of the real web service
@@ -51,8 +56,23 @@ public class PSPEndpointService implements PaymentService {
 
 	@Override
 	public Response createAccount(Account arg0) {
-		// TODO Auto-generated method stub
-		return null;
+		Response response = new Response();
+		Status status = new Status();
+		
+		if(arg0.getFirstName().equalsIgnoreCase("pspfail")) {
+			status.setStatusCode(arg0.getTmgId());
+			status.setStatusMessage("Create account filed for XREF " +arg0.getTmgId() +" - This test error was caused by the create account request message firstname = 'fail'");
+			status.setException("Create account filed for XREF " +arg0.getTmgId() +" - This test error was caused by the create account request message firstname = 'fail'");
+		} else {
+			status.setStatusCode(arg0.getTmgId());
+			status.setStatusDetail("VALID PSP status detail");
+			status.setStatusMessage("VALID PSP status message");
+			status.setException("null");
+		}
+		
+		response.setResponseStatus(status);
+		return response;
+	
 	}
 
 	@Override
