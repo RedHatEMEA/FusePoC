@@ -16,9 +16,9 @@
 -- ------------------------------------------------------------------------
 
 CREATE TABLE account(
-  id INT not null primary key GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),
-  name VARCHAR(100) DEFAULT NULL,
-  xrefId INT DEFAULT NULL,
+  ID INT not null primary key GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),
+  NAME VARCHAR(100) DEFAULT NULL,
+  XREFID INT DEFAULT NULL,
   CRMID INT DEFAULT NULL,
   PSPID INT DEFAULT NULL
 );
@@ -26,7 +26,7 @@ CREATE TABLE account(
 CREATE SEQUENCE seq_xrefId
 START WITH 10000;
 
-INSERT INTO account (name, xrefId)
-VALUES ('Jon Walton',1234);
-INSERT INTO account (name, xrefId)
-VALUES ('Graeme Colman',5678);
+INSERT INTO account (NAME, XREFID, CRMID)
+VALUES ('Jon Walton',1234, 100);
+INSERT INTO account (NAME, XREFID, CRMID)
+VALUES ('Graeme Colman',5678, 200);

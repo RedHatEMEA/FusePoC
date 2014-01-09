@@ -12,7 +12,9 @@ import org.apache.cxf.jaxrs.client.WebClient;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+//import com.tmg.fuse.poc.account.legacy.AccountDetails;
 import com.tmg.fuse.poc.account.AccountDetails;
+
 
 public class CamelContextXmlTest extends CamelSpringTestSupport {
 	
@@ -33,7 +35,8 @@ public class CamelContextXmlTest extends CamelSpringTestSupport {
 			public void configure() throws Exception {             
 				interceptSendToEndpoint("mock:client")
 				.to("log:input")
-				.unmarshal("xstream")
+				//.unmarshal("legacyAccountDetailsFormat")
+				.unmarshal("accountDetailsFormat")
 				.to(outputEndpoint);        
 				}     
 			});
@@ -41,7 +44,7 @@ public class CamelContextXmlTest extends CamelSpringTestSupport {
 		// Call the REST endpoint
 		WebClient client = WebClient.create(ENDPOINT_ADDRESS);
 		client.accept("application/json");
-		client.path("/accountservice/account/1");
+		client.path("/accountservice/account/1234");
 		Response r = client.get();
 		
 		// Retrieve the message body and cast to AccountDetails
@@ -50,6 +53,8 @@ public class CamelContextXmlTest extends CamelSpringTestSupport {
 		// Assert the values of the obect
 		assertEquals("Birmingham", a.getCity());
 		assertEquals("UK", a.getCountry());
+		assertEquals("100", a.getTSNumber());
+		
 	}
 	
 	

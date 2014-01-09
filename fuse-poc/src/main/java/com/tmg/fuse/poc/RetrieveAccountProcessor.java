@@ -18,11 +18,10 @@ public class RetrieveAccountProcessor implements Processor {
 			
 			List<Map<String, Object>> data = (List<Map<String, Object>>)inMessage.getBody();
 			Map<String, Object> row = data.get(0);
-        	String xrefId = row.get("XREFID").toString();
+        	String crmId = row.get("CRMID").toString();
+        	String name = row.get("NAME").toString();
         	
-        	System.out.println("\n XREFID is :" + xrefId);
-        	
-        	exchange.getOut().setBody(new Object[] {xrefId});
+        	exchange.getOut().setBody(new Object[] {crmId + ","+name});
         	
         	exchange.getOut().setHeader(CxfConstants.OPERATION_NAME, "getAccount");
         	 

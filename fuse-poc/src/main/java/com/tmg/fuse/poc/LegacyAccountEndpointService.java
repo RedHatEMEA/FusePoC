@@ -19,23 +19,21 @@ package com.tmg.fuse.poc;
 //import com.tmg.fuse.poc.account.InputAccount;
 import javax.xml.bind.JAXBElement;
 
-import com.tmg.fuse.poc.account.AccountDetails;
-import com.tmg.fuse.poc.account.AccountServicePortType;
-import com.tmg.fuse.poc.account.Result;
-import com.tmg.fuse.poc.account.util.WSError;
+import com.tmg.fuse.poc.account.legacy.AccountDetails;
+import com.tmg.fuse.poc.account.legacy.AccountServicePortType;
+import com.tmg.fuse.poc.account.legacy.Result;
 
 /**
  * This is the implementation of the real web service
  *
  * @version 
  */
-public class AccountEndpointService implements AccountServicePortType {
+public class LegacyAccountEndpointService implements AccountServicePortType {
 
 	@Override
 	public AccountDetails getAccount(String tsNumber) {
-		
-		System.out.println("***********CALLED CURRENT CRM SERVICE***************");
 
+		System.out.println("***********CALLED LEGACY CRM SERVICE***************");
 		// For the purposes of the demo the string coming in actually contains the TSNumber plus their Name
 		String name = tsNumber.split(",")[1];
 		String num = tsNumber.split(",")[0];
@@ -71,26 +69,13 @@ public class AccountEndpointService implements AccountServicePortType {
 	@Override
 	public Result updateAccount(AccountDetails accountDetails) {
 		// TODO Auto-generated method stub
-		System.out.println("[[UPDATE ACCOUNT] - Set account.name =" +accountDetails.getFirstName() +"]" );
 		return null;
 	}
 
 	@Override
 	public Result createAccount(AccountDetails accountDetails) {
 		// TODO Auto-generated method stub
-		Result result = new Result();
-		result.setTSNumber("A1011111");
-		WSError error = new WSError();
-		error.setErrorCode("null");
-		error.setErrorMessage("null");
-		result.setWsError(error);
-		if(accountDetails.getFirstName().equalsIgnoreCase("crmfail")) {
-			WSError e = new WSError();
-			e.setErrorCode(accountDetails.getGUID());
-			e.setErrorMessage("Create account filed for XREF " +accountDetails.getGUID() +" - This test error was caused by the create account request message firstname = 'fail'");
-			result.setWsError(e);
-		}
-		return result;
+		return null;
 	}
 
 	

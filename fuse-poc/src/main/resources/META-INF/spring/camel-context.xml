@@ -3,6 +3,7 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:cxf="http://camel.apache.org/schema/cxf"
        xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+       xmlns:tmg="http://account.poc.fuse.tmg.com"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 							http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd
 							http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
@@ -32,6 +33,18 @@
 	    </cxf:properties>
     </cxf:cxfEndpoint>
     
+    <cxf:cxfEndpoint id="legacyaccount"
+                   address="http://localhost:9001/legacy-proxy-crm"
+                   endpointName="s:AccountService"
+                   serviceName="s:AccountServiceService"
+                   serviceClass="com.tmg.fuse.poc.LegacyAccountEndpointService"
+                   wsdlURL="etc/legacyCRMService.wsdl"
+                   xmlns:s="http://legacy.account.poc.fuse.tmg.com">
+    	<cxf:properties>
+	        <entry key="dataFormat" value="CXF_MESSAGE"/>
+	    </cxf:properties>
+    </cxf:cxfEndpoint>
+    
     <cxf:cxfEndpoint id="psp"
                    address="http://localhost:9001/proxy-psp"
                    endpointName="s:PaymentServiceImplPort"
@@ -48,14 +61,10 @@
 	<!--  JMS Configuration          -->
 	<!--  *************************  -->	
 
-	<bean id="activemq" class="org.apache.activemq.camel.component.ActiveMQComponent">
-      <property name="brokerURL" value="vm:tmgAMQBroker"/>
+	<bean id="activemqx" class="org.apache.activemq.camel.component.ActiveMQComponent">
+      <property name="configuration" ref="jmsConfig" />
    	</bean>
-
-	<bean id="jms" class="org.apache.camel.component.jms.JmsComponent"> 
-	  <property name="configuration" ref="jmsConfig" />
-	 </bean>	
-	  
+	
 	<bean id="jmsConfig" class="org.apache.camel.component.jms.JmsConfiguration" >
 	  <property name="connectionFactory" ref="jmsPooledConnectionFactory" /> 
 	  <property name="transacted" value="true" /> 
@@ -76,8 +85,16 @@
 	<bean id="jmsConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory"> 
 	  <property name="brokerURL" value="vm:tmgAMQBroker" /> 
 	  <property name="watchTopicAdvisories" value="false" />
+	  <property name="redeliveryPolicy" ref="jmsRedeliverPolicy"/>
 	</bean>
 
+	<bean id="jmsRedeliverPolicy" class="org.apache.activemq.RedeliveryPolicy">
+	    <property name="maximumRedeliveries" value="5"/>
+	    <property name="initialRedeliveryDelay" value="1000"/>
+	    <property name="maximumRedeliveryDelay" value="10000"/>
+	    <property name="useExponentialBackOff" value="true"/>
+	    <property name="backOffMultiplier" value="2"/>
+	</bean>
 	 
 	
 	<!--  ************************* -->
@@ -88,11 +105,16 @@
        <property name="redeliveryPolicy" ref="accountTopicRedeliveryPolicyConfig"/>
    </bean>
  
-   <!-- here we set the redelivery settings -->
+   <!-- set the redelivery settings -->
 	<bean id="accountTopicRedeliveryPolicyConfig" class="org.apache.camel.processor.RedeliveryPolicy">
        <property name="maximumRedeliveries" value="3"/>
        <property name="redeliveryDelay" value="250"/>
    </bean>
+   
+   	<bean id="required" class="org.apache.camel.spring.spi.SpringTransactionPolicy">
+		<property name="transactionManager" ref="jmsTransactionManager"/>
+		<property name="propagationBehaviorName" value="PROPAGATION_REQUIRED"/>
+	</bean>
 
 	<!--  ************************* -->
 	<!--  Set up the Rest Resources -->
@@ -105,7 +127,6 @@
 	<!--  Set up Beans to assist with POC  -->
 	<!--  *******************************  -->	
 
-	
 	<!-- Use a bean to start and stop the real web service (is not Camel specific) -->
   	<!-- In a real use-case the real web service would be the real CRM service running on another server but we simulate this in the same JVM -->
 	<bean id="realCRMWebService" class="com.tmg.fuse.poc.RealCRMWebServiceBean"
@@ -113,6 +134,13 @@
     	<!-- url of the real web service we have proxied -->
     	<property name="url" value="http://localhost:9000/real-crm-service"/>
   	</bean>
+  	
+  	<bean id="legacyRealCRMWebService" class="com.tmg.fuse.poc.LegacyRealCRMWebServiceBean"
+        init-method="start" destroy-method="stop">
+    	<!-- url of the real web service we have proxied -->
+    	<property name="url" value="http://localhost:9000/legacy-real-crm-service"/>
+  	</bean>
+  	
 	<bean id="realPSPWebService" class="com.tmg.fuse.poc.RealPSPWebServiceBean"
         init-method="start" destroy-method="stop">
     	<!-- url of the real web service we have proxied -->
@@ -121,9 +149,18 @@
   	
 	<!-- bean that enriches the SOAP request -->
   	<bean id="retrieveAccount" class="com.tmg.fuse.poc.RetrieveAccountProcessor"/>
+  	<bean id="createAccount" class="com.tmg.fuse.poc.CreateAccountProcessor"/>
+  	<bean id="updateAccount" class="com.tmg.fuse.poc.UpdateAccountprocessor"/>
+  	<bean id="pspCreateAccount" class="com.tmg.fuse.poc.PSPCreateAccountProcessor"/>
   	<bean id="accountDetailsProcessor" class="com.tmg.fuse.poc.AccountDetailsProcessor"/>
+  	<bean id="legacyAccountDetailsProcessor" class="com.tmg.fuse.poc.LegacyAccountDetailsProcessor"/>
     <bean id="accountprocessor" class="com.tmg.fuse.poc.AccountProcessor"/>
 	<bean id="guidEnrichStrategy" class="com.tmg.fuse.poc.GUIDAggregationStrategy"/>
+	<bean id="updateAccountStrategy" class="com.tmg.fuse.poc.UpdateAccountAggregationStrategy"/>
+	<bean id="validateAccount" class="com.tmg.fuse.poc.AccountValidationProcessor"/>
+	<bean id="createAccountException" class="java.lang.IllegalArgumentException">
+	   <constructor-arg index="0" value="Error in Create Account"/>
+	</bean>
 	
 	<!-- 
 	<bean id="camelTracer" class="org.apache.camel.processor.interceptor.Tracer">
@@ -140,19 +177,21 @@
 	<!--  Camel Context Definition  -->
 	<!--  ************************* -->
 	
-	<camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+	<camelContext id="camel" xmlns="http://camel.apache.org/schema/spring" >
 	
 		<!--  ************************* -->
 		<!--  Endpoint for real CRM service  -->
 		<!--  ************************* -->
 	    <endpoint id="callRealCRMWebService" uri="http://localhost:9000/real-crm-service?throwExceptionOnFailure=false"/>
+	    <endpoint id="callLegacyRealCRMWebService" uri="http://localhost:9000/legacy-real-crm-service?throwExceptionOnFailure=false"/>
 	   	<endpoint id="callRealPSPWebService" uri="http://localhost:9000/real-psp-service?throwExceptionOnFailure=false"/>
 	
 		<!--  ************************* -->
 		<!--  Data Formats Definitions  -->
 		<!--  ************************* -->
 		<dataFormats>
-		    <json id="xstream" unmarshalTypeName="com.tmg.fuse.poc.account.AccountDetails"/>
+		    <json id="accountDetailsFormat" unmarshalTypeName="com.tmg.fuse.poc.account.AccountDetails"/>
+		    <json id="legacyAccountDetailsFormat" unmarshalTypeName="com.tmg.fuse.poc.account.legacy.AccountDetails"/>
 		</dataFormats>
 	   
 
@@ -160,7 +199,7 @@
 		<!--  REST to Topic Camel Route  -->
 		<!--  *************************  -->	
 
-	    <route streamCache="true" errorHandlerRef="accountTopicErrorHandler">
+	    <route streamCache="true" >
 	        <from uri="cxfrs://bean://rsServer"/>
         	<log message="Retrieved request for operation: ${header.operationName}"/>
         
@@ -168,28 +207,48 @@
            	    <when>
                		<simple>${in.header.operationName} == 'retrieveAccount'</simple>
                		<log message="Retrieving account from CRM"/>
+               		<!-- NAME is only being retrieved so we can show that updates work -->
                		<setBody>
-		            	<simple>select xrefId from account where id = ${body}</simple>
+		            	<simple>select CRMID, NAME from account where XREFID = ${body}</simple>
 		        	</setBody>
 	        		<enrich uri="jdbc:dataSource"/>
                		<to uri="bean:retrieveAccount"/>
                		<log message="Calling CRM service"/>
+               		  
                		<to uri="cxf:bean:account?dataFormat=POJO"/>
                		<to uri="bean:accountDetailsProcessor"/>
-               		<marshal ref="xstream"/>
-               		<to uri="mock:client"/>
+               		<marshal ref="accountDetailsFormat"/>
+               		
+               		<!-- 
+               		<to uri="cxf:bean:legacyaccount?dataFormat=POJO"/>
+               		<to uri="bean:legacyAccountDetailsProcessor"/>
+               		<marshal ref="legacyAccountDetailsFormat"/>
+               		 -->
                    </when>                  
            	    <when>	
                		<simple>${in.header.operationName} == 'createAccount'</simple>
                		<process ref="accountprocessor"/>
                 	<enrich uri="direct:guidEnricher" strategyRef="guidEnrichStrategy"/>	                                
-                	<log message="Putting createAccount message on topic ${body}"/>	            
-                	<inOnly uri="activemq:topic:accountTopic?disableReplyTo=true"/>	  	    	                     
+                	<log message="Putting createAccount message on topic ${body}"/>	    
+                	<wireTap uri="direct:dummyAccountInsert"/>        
+                	<inOnly uri="activemqx:topic:accountTopic?disableReplyTo=true"/>	  	    	                     
+	            </when>
+	            <when>	
+               		<simple>${in.header.operationName} == 'updateAccount'</simple>
+               		<process ref="accountprocessor"/>
+  	    	        <enrich uri="direct:fetchAccount" strategyRef="updateAccountStrategy"/>             
+  	    	        <log message="After enrich ${body}"/>
+  	    	        <wireTap uri="direct:dummyAccountUpdate"/>
+  	    	        <process ref="updateAccount"/>
+		        	<to uri="cxf:bean:account?dataFormat=POJO"/>
+		        	<marshal ref="xstream"/>
+		        	
 	            </when>
 	            <otherwise>
 	            	<log message="Request unavailable"/>           	
 	            </otherwise>
 	        </choice>
+	        <to uri="mock:client"/>
 	    </route>
 		
 
@@ -208,23 +267,70 @@
         	<to uri="jdbc:dataSource"/> 
 		</route>
 
+		<route>
+			<from uri="direct:fetchAccount"/>
+			<setBody>
+        		<simple>select xrefId, name from account where xrefid = ${body.accountID}</simple>
+        	</setBody>
+        	<to uri="jdbc:dataSource"/> 
+        	<log message="fetched account ${body}"/>
+		</route>
+
+		<route>
+			<from uri="direct:dummyAccountUpdate"/>
+			<setBody>
+		   		<simple>update account set name = '${body.name}' where xrefid = ${body.accountID}</simple>
+		    </setBody>
+		    <to uri="jdbc:dataSource"/>
+		</route>
+		
+		<route>
+			<from uri="direct:dummyAccountInsert"/>
+			<setBody>
+		   		<simple>insert into account(name, xrefid, crmid, pspid) values ('${body.name}', ${body.accountID}, 0,0)</simple>
+		    </setBody>
+		    <to uri="jdbc:dataSource"/>
+		</route>
 		<!--  ******************************  -->
 		<!--  Topic to CRM Camel Route  -->
 		<!--  ******************************  -->	
-	    <route>
-	    	<from uri="activemq:topic:accountTopic"/>
-	    	<log message="CRM CONSUMED - ${body}"/>
+	    <route errorHandlerRef="accountTopicErrorHandler">
+	    	<from uri="activemqx:topic:accountTopic"/>
+	    	<process ref="createAccount"/>
+	    	<to uri="cxf:bean:account?dataFormat=POJO"/>
+	    	<process ref="validateAccount"/>
+	    	<choice>
+	    		<when>
+	    			<simple>${body.wsError.errorCode} != 'null'</simple>
+	    			<log message="[TMG_ERROR] CRM account [XREFID=${body.wsError.errorCode}] failed to be created on the CRM system. Message has been written to [activemq:AccountCreateErrorQueue]"/>
+	    			<inOnly uri="activemqx:AccountCreateErrorQueue"/>
+	    		</when>
+	    		<otherwise>
+	    			<log message="[TMG INFO] CRM account created successfully"/>
+	    		</otherwise>
+	    	</choice>	
 	    </route>
 
     
  		<!--  ******************************  -->
 		<!--  Topic to PSP Camel Route  -->
 		<!--  ******************************  -->	   
-    	<route>
-	    	<from uri="activemq:topic:accountTopic"/>
-	    	<log message="PSP CONSUMED - ${body}"/>
+	    <route errorHandlerRef="accountTopicErrorHandler">
+	    	<from uri="activemqx:topic:accountTopic"/>
+	    	<process ref="pspCreateAccount"/>
+	    	<to uri="cxf:bean:psp?dataFormat=POJO"/>
+	    	<process ref="validateAccount"/>
+	    	<choice>
+	    		<when>
+	    			<simple>${body.responseStatus.exception} != 'null'</simple>
+	    			<log message="[TMG_ERROR] PSP account [XREFID=${body.responseStatus.statusCode}] failed to be created on the PSP system. Message has been written to [activemq:AccountCreateErrorQueue]"/>
+	    			<inOnly uri="activemqx:AccountCreateErrorQueue"/>
+	    		</when>
+	    		<otherwise>
+	    			<log message="[TMG INFO] PSP account created successfully"/>
+	    		</otherwise>
+	    	</choice>	
 	    </route>
-	    
 	    
 
  		<!--  *****************************************************************************************  -->
@@ -237,6 +343,17 @@
       		<to uri="log:input?showStreams=true"/>
       		<!-- send proxied request to real web service -->
       		<to ref="callRealCRMWebService"/>
+      		<!-- log answer from real web service -->
+      		<to uri="log:output?showStreams=true"/>
+   	 	</route>
+   	 	
+   	 	<route streamCache="true">
+      		<!-- CXF consumer using MESSAGE format -->
+      		<from uri="cxf:bean:legacyaccount?dataFormat=MESSAGE"/>
+      		<!-- log input received -->
+      		<to uri="log:input?showStreams=true"/>
+      		<!-- send proxied request to real web service -->
+      		<to ref="callLegacyRealCRMWebService"/>
       		<!-- log answer from real web service -->
       		<to uri="log:output?showStreams=true"/>
    	 	</route>

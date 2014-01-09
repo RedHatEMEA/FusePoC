@@ -221,6 +221,12 @@
                   </bindingFiles>
                 </wsdlOption>
                 <wsdlOption>
+                  <wsdl>${basedir}/src/main/resources/etc/legacyCRMService.wsdl</wsdl>
+                  <bindingFiles>
+                    <bindingFile>${basedir}/src/main/resources/etc/bindings.txt</bindingFile>
+                  </bindingFiles>
+                </wsdlOption>
+                <wsdlOption>
                   <wsdl>${basedir}/src/main/resources/etc/paymentService.wsdl</wsdl>
                   <bindingFiles>
                     <bindingFile>${basedir}/src/main/resources/etc/bindings.txt</bindingFile>
