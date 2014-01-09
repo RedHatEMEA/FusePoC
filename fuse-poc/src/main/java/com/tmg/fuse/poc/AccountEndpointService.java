@@ -61,14 +61,8 @@ public class AccountEndpointService implements AccountServicePortType {
 		a.setStreet("-");
 		a.setTCode("-");
 		a.setTitle("Mr");
-<<<<<<< HEAD
 		a.setTSNumber(num);
-		
-		
-=======
-		a.setTSNumber("-");
 
->>>>>>> 9820c6af3c724fcad2b0a57813a76a0c4c78bcaf
 		return a;
 	}
 	
