@@ -121,7 +121,7 @@
   	
 	<!-- bean that enriches the SOAP request -->
   	<bean id="retrieveAccount" class="com.tmg.fuse.poc.RetrieveAccountProcessor"/>
-  
+  	<bean id="accountDetailsProcessor" class="com.tmg.fuse.poc.AccountDetailsProcessor"/>
     <bean id="accountprocessor" class="com.tmg.fuse.poc.AccountProcessor"/>
 	<bean id="guidEnrichStrategy" class="com.tmg.fuse.poc.GUIDAggregationStrategy"/>
 	
@@ -133,6 +133,7 @@
 	    <property name="logName" value="com.mycompany.messages"/>
 	</bean>
  -->
+	
 	
 	
 	<!--  ************************* -->
@@ -151,7 +152,7 @@
 		<!--  Data Formats Definitions  -->
 		<!--  ************************* -->
 		<dataFormats>
-		    <json id="json"/>
+		    <json id="xstream" unmarshalTypeName="com.tmg.fuse.poc.account.AccountDetails"/>
 		</dataFormats>
 	   
 
@@ -174,7 +175,9 @@
                		<to uri="bean:retrieveAccount"/>
                		<log message="Calling CRM service"/>
                		<to uri="cxf:bean:account?dataFormat=POJO"/>
-               		<to uri="direct:marshalToJson"/>
+               		<to uri="bean:accountDetailsProcessor"/>
+               		<marshal ref="xstream"/>
+               		<to uri="mock:client"/>
                    </when>                  
            	    <when>	
                		<simple>${in.header.operationName} == 'createAccount'</simple>
@@ -223,13 +226,6 @@
 	    </route>
 	    
 	    
-	    <route streamCache="true">
-		    <from uri="direct:marshalToJson"/>
-		    <to uri="log:input?showStreams=true"/>
-		    <marshal ref="json"/>
-		    <to uri="mock:json" />
-		    <to uri="log:output?showStreams=true"/>
-		</route>
 
  		<!--  *****************************************************************************************  -->
 		<!--   Dummy routes for the CRM/PSP backend service. Has a cxf proxy service infront of the real one  -->

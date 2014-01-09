@@ -7,6 +7,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import com.tmg.fuse.poc.account.AccountDetails;
 
 @Path("/accountservice/")
 public class AccountResource {
@@ -22,8 +23,8 @@ public class AccountResource {
 
     @GET
     @Path("/account/{id}/")
-    @Produces("text/xml")
-    public Account retrieveAccount(@PathParam("id") String id) {
+    @Produces("application/json")
+    public AccountDetails retrieveAccount(@PathParam("id") String id) {
         return null;
     }
 

@@ -1,71 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
-
   <groupId>com.mycompany</groupId>
   <artifactId>fuse-poc</artifactId>
-  <packaging>jar</packaging>
   <version>1.0.0-SNAPSHOT</version>
-
   <name>A Camel Spring Route</name>
   <url>http://www.myorganization.org</url>
-
   <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
-
-  <repositories>
-    <repository>
-      <id>release.fusesource.org</id>
-      <name>FuseSource Release Repository</name>
-      <url>http://repo.fusesource.com/nexus/content/repositories/releases</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-    </repository>
-    <repository>
-      <id>snapshot.fusesource.org</id>
-      <name>FuseSource Snapshot Repository</name>
-      <url>http://repo.fusesource.com/nexus/content/repositories/snapshots</url>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-    </repository>
-  </repositories>
-
-  <pluginRepositories>
-    <pluginRepository>
-      <id>release.fusesource.org</id>
-      <name>FuseSource Release Repository</name>
-      <url>http://repo.fusesource.com/nexus/content/repositories/releases</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-    </pluginRepository>
-    <pluginRepository>
-      <id>snapshot.fusesource.org</id>
-      <name>FuseSource Snapshot Repository</name>
-      <url>http://repo.fusesource.com/nexus/content/repositories/snapshots</url>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-    </pluginRepository>  
-  </pluginRepositories>
-
   <dependencies>
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -77,105 +22,86 @@
       <artifactId>camel-spring</artifactId>
       <version>2.10.0.redhat-60024</version>
     </dependency>
-	<dependency>
+    <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-http</artifactId>
       <version>2.10.0.redhat-60024</version>
     </dependency>
     <dependency>
-	  <groupId>org.apache.camel</groupId>
-	  <artifactId>camel-xstream</artifactId>
-	  <version>2.10.0</version>
-	</dependency>
-
-	<!--  Dependencies for CXF Services -->
-
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-cxf</artifactId>
-            <version>2.10.0.redhat-60024</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.cxf</groupId>
-            <artifactId>cxf-rt-transports-http-jetty</artifactId>
-            <version>2.6.0.redhat-60024</version>
-        </dependency>
-
-	<!--  Dependencies for JMS and Activce MQ -->
-	
-	    <dependency>
-	      	<groupId>org.apache.camel</groupId>
-	      	<artifactId>camel-jms</artifactId>
-	      	<version>2.10.0.redhat-60024</version>
-    	</dependency>
-
-    <!-- the ActiveMQ client with connection pooling -->
-	    <dependency>
-	      <groupId>org.apache.activemq</groupId>
-	      <artifactId>activemq-client</artifactId>
-	      <version>5.8.0.redhat-60024</version>
-	    </dependency>
-	    
-	    <dependency>
-	      <groupId>org.apache.activemq</groupId>
-	      <artifactId>activemq-camel</artifactId>
-	      <version>5.8.0.redhat-60024</version>
-	    </dependency>
-	    
-	    <dependency>
-	      <groupId>org.apache.activemq</groupId>
-	      <artifactId>activemq-pool</artifactId>
-	      <version>5.8.0.redhat-60024</version>
-	    </dependency>
-
-    <!-- the ActiveMQ broker is optional and can be removed if connecting to a remote broker only -->
-	    <dependency>
-	      <groupId>org.apache.activemq</groupId>
-	      <artifactId>activemq-broker</artifactId>
-	      <version>5.8.0.redhat-60024</version>
-	    </dependency>
-	    
-	    <dependency>
-	      <groupId>org.apache.activemq</groupId>
-	      <artifactId>activemq-spring</artifactId>
-	      <version>5.8.0.redhat-60024</version>
-	    </dependency>
-	    
-	    <dependency>
-	      <groupId>org.apache.activemq</groupId>
-	      <artifactId>activemq-kahadb-store</artifactId>
-	      <version>5.8.0.redhat-60024</version>
-	    </dependency>
-	    
-	    <dependency>
-	      <groupId>org.apache.xbean</groupId>
-	      <artifactId>xbean-spring</artifactId>
-	      <version>3.12</version>
-	    </dependency>
-	    
-	    <dependency>
-	      <groupId>org.springframework</groupId>
-	      <artifactId>spring-context</artifactId>
-	      <version>3.1.3.RELEASE</version>
-	    </dependency>
-
-		 <dependency>
-            <groupId>org.apache.derby</groupId>
-            <artifactId>derby</artifactId>
-            <version>10.10.1.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-jdbc</artifactId>
-            <version>2.10.0.redhat-60024</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-jdbc</artifactId>
-            <version>3.1.3.RELEASE</version>
-        </dependency>
-
-    <!-- logging -->
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-xstream</artifactId>
+      <version>2.10.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-cxf</artifactId>
+      <version>2.10.0.redhat-60024</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.cxf</groupId>
+      <artifactId>cxf-rt-transports-http-jetty</artifactId>
+      <version>2.6.0.redhat-60024</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-jms</artifactId>
+      <version>2.10.0.redhat-60024</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>activemq-client</artifactId>
+      <version>5.8.0.redhat-60024</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>activemq-camel</artifactId>
+      <version>5.8.0.redhat-60024</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>activemq-pool</artifactId>
+      <version>5.8.0.redhat-60024</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>activemq-broker</artifactId>
+      <version>5.8.0.redhat-60024</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>activemq-spring</artifactId>
+      <version>5.8.0.redhat-60024</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>activemq-kahadb-store</artifactId>
+      <version>5.8.0.redhat-60024</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.xbean</groupId>
+      <artifactId>xbean-spring</artifactId>
+      <version>3.12</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context</artifactId>
+      <version>3.1.3.RELEASE</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.derby</groupId>
+      <artifactId>derby</artifactId>
+      <version>10.10.1.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-jdbc</artifactId>
+      <version>2.10.0.redhat-60024</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-jdbc</artifactId>
+      <version>3.1.3.RELEASE</version>
+    </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
@@ -191,23 +117,71 @@
       <artifactId>log4j</artifactId>
       <version>1.2.17</version>
     </dependency>
-
-    <!-- testing -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-test-spring</artifactId>
       <version>2.10.0.redhat-60024</version>
       <scope>test</scope>
     </dependency>
-
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-test</artifactId>
+      <version>2.10.0.redhat-60024</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
-
+  <repositories>
+    <repository>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <id>release.fusesource.org</id>
+      <name>FuseSource Release Repository</name>
+      <url>http://repo.fusesource.com/nexus/content/repositories/releases</url>
+    </repository>
+    <repository>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <id>snapshot.fusesource.org</id>
+      <name>FuseSource Snapshot Repository</name>
+      <url>http://repo.fusesource.com/nexus/content/repositories/snapshots</url>
+    </repository>
+  </repositories>
+  <pluginRepositories>
+    <pluginRepository>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <id>release.fusesource.org</id>
+      <name>FuseSource Release Repository</name>
+      <url>http://repo.fusesource.com/nexus/content/repositories/releases</url>
+    </pluginRepository>
+    <pluginRepository>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <id>snapshot.fusesource.org</id>
+      <name>FuseSource Snapshot Repository</name>
+      <url>http://repo.fusesource.com/nexus/content/repositories/snapshots</url>
+    </pluginRepository>
+  </pluginRepositories>
   <build>
     <defaultGoal>install</defaultGoal>
-
     <plugins>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>2.5.1</version>
         <configuration>
@@ -216,23 +190,17 @@
         </configuration>
       </plugin>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-resources-plugin</artifactId>
         <version>2.4.3</version>
         <configuration>
           <encoding>UTF-8</encoding>
         </configuration>
       </plugin>
-
-      <!-- allows the route to be ran via 'mvn camel:run' -->
       <plugin>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-maven-plugin</artifactId>
         <version>2.10.0.redhat-60024</version>
       </plugin>
-  
-  	
-      <!-- CXF wsdl2java generator, will plugin to the compile goal -->
       <plugin>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-codegen-plugin</artifactId>
@@ -240,32 +208,29 @@
           <execution>
             <id>generate-sources</id>
             <phase>generate-sources</phase>
+            <goals>
+              <goal>wsdl2java</goal>
+            </goals>
             <configuration>
               <sourceRoot>${basedir}/target/generated/src/main/java</sourceRoot>
               <wsdlOptions>
                 <wsdlOption>
                   <wsdl>${basedir}/src/main/resources/etc/currentCRMService.wsdl</wsdl>
                   <bindingFiles>
-			        <bindingFile>${basedir}/src/main/resources/etc/bindings.txt</bindingFile>
-			      </bindingFiles>
+                    <bindingFile>${basedir}/src/main/resources/etc/bindings.txt</bindingFile>
+                  </bindingFiles>
                 </wsdlOption>
                 <wsdlOption>
                   <wsdl>${basedir}/src/main/resources/etc/paymentService.wsdl</wsdl>
                   <bindingFiles>
-			        <bindingFile>${basedir}/src/main/resources/etc/bindings.txt</bindingFile>
-			      </bindingFiles>
+                    <bindingFile>${basedir}/src/main/resources/etc/bindings.txt</bindingFile>
+                  </bindingFiles>
                 </wsdlOption>
               </wsdlOptions>
             </configuration>
-            <goals>
-              <goal>wsdl2java</goal>
-            </goals>
           </execution>
         </executions>
       </plugin>
-  
-  		</plugins>
+    </plugins>
   </build>
-  
-
 </project>
