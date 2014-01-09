@@ -241,8 +241,7 @@
   	    	        <wireTap uri="direct:dummyAccountUpdate"/>
   	    	        <process ref="updateAccount"/>
 		        	<to uri="cxf:bean:account?dataFormat=POJO"/>
-		        	<marshal ref="xstream"/>
-		        	
+		        	<marshal ref="xstream"/>>
 	            </when>
 	            <otherwise>
 	            	<log message="Request unavailable"/>           	
@@ -332,6 +331,30 @@
 	    	</choice>	
 	    </route>
 	    
+ 		<!--  ******************************  -->
+		<!--  Batch account create Route       -->
+		<!--  ******************************  -->	
+		<route>
+	        <from uri="file:////home/gcolman/RedHat/Accounts/telegraph/poc/batch?delete=true&amp;consumer.delay=10000" />	
+	        <log message="FROM CSV ${body}"/>
+	        <unmarshal><csv /></unmarshal>
+	        <split>
+				<simple>body</simple>
+				<to uri="direct:handleBatchQueue"/>
+			</split>
+		</route>
+
+		<route>
+			<from uri="direct:handleBatchQueue"/>
+			<setHeader headerName="operationName">
+				<constant>batchAccount</constant>	
+			</setHeader>
+			<process ref="accountprocessor"/>
+			<enrich uri="direct:guidEnricher" strategyRef="guidEnrichStrategy"/>	                                
+            <log message="Putting createAccount message on topic ${body}"/>	    
+            <wireTap uri="direct:dummyAccountInsert"/>        
+            <inOnly uri="activemqx:topic:accountTopic?disableReplyTo=true"/>	  			
+		</route>
 
  		<!--  *****************************************************************************************  -->
 		<!--   Dummy routes for the CRM/PSP backend service. Has a cxf proxy service infront of the real one  -->

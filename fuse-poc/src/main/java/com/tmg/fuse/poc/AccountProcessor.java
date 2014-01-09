@@ -1,5 +1,9 @@
 package com.tmg.fuse.poc;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
@@ -35,6 +39,16 @@ public class AccountProcessor implements Processor{
         	MessageContentsList inList = (MessageContentsList)exchange.getIn().getBody();
         	Account account = (Account)inList.get(0);
         
+        	//Set the account body and headers back onto the body
+        	exchange.getOut().setBody(account);
+        	exchange.getOut().setHeaders(exchange.getIn().getHeaders());
+        } else if("batchAccount".equals(operationName)) {
+        	
+        	List l = (List)exchange.getIn().getBody();
+        	Account account = new Account();
+        	account.setAccountID("100000");
+        	account.setName((String)l.get(0));
+        	
         	//Set the account body and headers back onto the body
         	exchange.getOut().setBody(account);
         	exchange.getOut().setHeaders(exchange.getIn().getHeaders());
