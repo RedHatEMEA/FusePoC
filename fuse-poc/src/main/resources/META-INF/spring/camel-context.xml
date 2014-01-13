@@ -199,7 +199,7 @@
 		<!--  REST to Topic Camel Route  -->
 		<!--  *************************  -->	
 
-	    <route streamCache="true" >
+	    <route id="main" streamCache="true" >
 	        <from uri="cxfrs://bean://rsServer"/>
         	<log message="Retrieved request for operation: ${header.operationName}"/>
         
@@ -253,7 +253,7 @@
 		
 
 		<!-- Error route for account route  --> 
-		<route>
+		<route id="accountError">
 			<from uri="activemq:accountTopicDLQ"/>
 			<log message="MESSAGE READ FROM accountTopicDLQ ERROR QUEUE ${body}" />
 		</route>
@@ -284,17 +284,19 @@
 		    <to uri="jdbc:dataSource"/>
 		</route>
 		
-		<route>
+		<route id="insertAccountInDB">
 			<from uri="direct:dummyAccountInsert"/>
+			<log message="Body = ${body}"/>
 			<setBody>
-		   		<simple>insert into account(name, xrefid, crmid, pspid) values ('${body.name}', ${body.accountID}, 0,0)</simple>
+		   		<simple>insert into account(name, xrefid, crmid, pspid) values ('${body.firstName}', ${body.guid}, 0,0)</simple>
+		   		
 		    </setBody>
 		    <to uri="jdbc:dataSource"/>
 		</route>
 		<!--  ******************************  -->
 		<!--  Topic to CRM Camel Route  -->
 		<!--  ******************************  -->	
-	    <route errorHandlerRef="accountTopicErrorHandler">
+	    <route id="topicToCRM" errorHandlerRef="accountTopicErrorHandler">
 	    	<from uri="activemqx:topic:accountTopic"/>
 	    	<process ref="createAccount"/>
 	    	<to uri="cxf:bean:account?dataFormat=POJO"/>
@@ -315,7 +317,7 @@
  		<!--  ******************************  -->
 		<!--  Topic to PSP Camel Route  -->
 		<!--  ******************************  -->	   
-	    <route errorHandlerRef="accountTopicErrorHandler">
+	    <route id="topicToPSP" errorHandlerRef="accountTopicErrorHandler">
 	    	<from uri="activemqx:topic:accountTopic"/>
 	    	<process ref="pspCreateAccount"/>
 	    	<to uri="cxf:bean:psp?dataFormat=POJO"/>
@@ -332,6 +334,30 @@
 	    	</choice>	
 	    </route>
 	    
+ 		<!--  ******************************  -->
+		<!--  Batch account create Route       -->
+		<!--  ******************************  -->	
+		<route>
+	        <from uri="file:////home/gcolman/RedHat/Accounts/telegraph/poc/batch?delete=true&amp;consumer.delay=10000" />	
+	        <log message="FROM CSV ${body}"/>
+	        <unmarshal><csv /></unmarshal>
+	        <split>
+				<simple>body</simple>
+				<to uri="direct:handleBatchQueue"/>
+			</split>
+		</route>
+
+		<route>
+			<from uri="direct:handleBatchQueue"/>
+			<setHeader headerName="operationName">
+				<constant>batchAccount</constant>	
+			</setHeader>
+			<process ref="accountprocessor"/>
+			<enrich uri="direct:guidEnricher" strategyRef="guidEnrichStrategy"/>	                                
+            <log message="Putting createAccount message on topic ${body}"/>	    
+            <wireTap uri="direct:dummyAccountInsert"/>        
+            <inOnly uri="activemqx:topic:accountTopic?disableReplyTo=true"/>	  			
+		</route>
 
  		<!--  *****************************************************************************************  -->
 		<!--   Dummy routes for the CRM/PSP backend service. Has a cxf proxy service infront of the real one  -->

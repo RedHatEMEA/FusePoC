@@ -6,11 +6,12 @@ import java.util.LinkedHashMap;
 import org.apache.camel.Exchange;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.cxf.message.MessageContentsList;
+import com.tmg.fuse.poc.canonical.CanonicalAccountDetails;
 
 public class GUIDAggregationStrategy implements AggregationStrategy {
 
     public Exchange aggregate(Exchange original, Exchange resource) {
-        Account account = (Account)original.getIn().getBody();
+    	CanonicalAccountDetails account = (CanonicalAccountDetails)original.getIn().getBody();
         String ID = "";
         
         
@@ -42,7 +43,7 @@ public class GUIDAggregationStrategy implements AggregationStrategy {
     	}        
     	
     	//Set the sequence number as the account ID
-    	account.setAccountID(ID);
+    	account.setGuid(ID);
     	
     	// Set the new account object as the body.
     	original.getOut().setBody(account);

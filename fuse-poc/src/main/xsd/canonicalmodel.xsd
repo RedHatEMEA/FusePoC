@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://canonical.poc.fuse.tmg.com" 
+xmlns:tns="http://canonical.poc.fuse.tmg.com" 
+xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc" 
+elementFormDefault="qualified">
+
+<element name="CanonicalAccountDetails">
+	<complexType>
+		<sequence>
+		  <element name="accountType" minOccurs="0" type="string" nillable="true"/>
+		  <element name="city" minOccurs="0" type="string" nillable="true"/>
+		  <element name="country" minOccurs="0" type="string" nillable="true"/>
+		  <element name="county" minOccurs="0" type="string" nillable="true"/>
+		  <element name="digitalSubscriberStatus" minOccurs="0" type="string" nillable="true"/>
+		  <element name="firstName" minOccurs="0" type="string" nillable="true"/>
+		  <element name="guid" minOccurs="0" type="string" nillable="true"/>
+		  <element name="homePhone" minOccurs="0" type="string" nillable="true"/>
+		  <element name="lastName" minOccurs="0" type="string" nillable="true"/>
+		  <element name="marketingEmailPref" minOccurs="0" type="boolean" nillable="true"/>
+		  <element name="marketingPhonePref" minOccurs="0" type="boolean" nillable="true"/>
+		  <element name="marketingPostPref" minOccurs="0" type="boolean" nillable="true"/>
+		  <element name="marketingSMSPref" minOccurs="0" type="boolean" nillable="true"/>
+		  <element name="mobilePhone" minOccurs="0" type="string" nillable="true"/>
+		  <element name="personalEmail" minOccurs="0" type="string" nillable="true"/>
+		  <element name="postalCode" minOccurs="0" type="string" nillable="true"/>
+		  <element name="street" minOccurs="0" type="string" nillable="true"/>
+		  <element name="TCode" minOccurs="0" type="string" nillable="true"/>
+		  <element name="title" minOccurs="0" type="string" nillable="true"/>
+		  <element name="TSNumber" minOccurs="0" type="string" nillable="true"/>
+		  <element minOccurs="0" name="ewallet" type="tns:ewallet"/>
+		</sequence>
+	</complexType>
+</element>
+	<complexType name="ewallet">
+        <complexContent>
+          <extension base="tns:tmgEntity">
+            <sequence>
+              <element minOccurs="0" name="accountId" type="string"/>
+              <element minOccurs="0" name="balance" type="decimal"/>
+              <element maxOccurs="unbounded" minOccurs="0" name="payInstruments" nillable="true" type="tns:paymentInstrument"/>
+              <element minOccurs="0" name="primaryInstrumentId" type="string"/>
+            </sequence>
+          </extension>
+        </complexContent>
+      </complexType>
+      <complexType name="tmgEntity">
+        <sequence>
+          <element minOccurs="0" name="tmgId" type="string"/>
+        </sequence>
+      </complexType>
+      <complexType final="extension restriction" name="paymentInstrument">
+        <complexContent>
+          <extension base="tns:tmgEntity">
+            <sequence>
+              <element minOccurs="0" name="cardHolderName" type="string"/>
+              <element minOccurs="0" name="cardNumber" type="string"/>
+              <element minOccurs="0" name="cvvNumber" type="string"/>
+              <element name="expiryMonth" type="int"/>
+              <element name="expiryYear" type="int"/>
+            </sequence>
+          </extension>
+        </complexContent>
+      </complexType>
+</schema>
