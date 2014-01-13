@@ -10,3 +10,6 @@
 /fuse-poc/target
 .metadata
 /fuse-poc/activemq-data
+camel-java
+camel-spring
+Servers
