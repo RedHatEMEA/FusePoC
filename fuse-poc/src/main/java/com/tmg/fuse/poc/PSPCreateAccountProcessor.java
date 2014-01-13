@@ -4,16 +4,20 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 
+import com.tmg.fuse.poc.psp.Account;
+import com.tmg.fuse.poc.canonical.CanonicalAccountDetails;
+
 public class PSPCreateAccountProcessor  implements Processor {
 
 	@Override
 	public void process(Exchange exchange) throws Exception {
-	
-		Account account = (Account)exchange.getIn().getBody();
+		
+		CanonicalAccountDetails account = (CanonicalAccountDetails)exchange.getIn().getBody();
+		
 
-		com.tmg.fuse.poc.psp.Account pspAccount = new com.tmg.fuse.poc.psp.Account();
-		pspAccount.setFirstName(account.getName());
-		pspAccount.setTmgId(account.getAccountID());
+		Account pspAccount = new Account();
+		pspAccount.setFirstName(account.getFirstName());
+		pspAccount.setTmgId(account.getGuid());
 		
     	exchange.getOut().setBody(pspAccount);
     	exchange.getOut().setHeaders(exchange.getIn().getHeaders());

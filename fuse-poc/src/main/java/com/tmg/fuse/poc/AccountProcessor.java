@@ -51,12 +51,17 @@ public class AccountProcessor implements Processor{
         } else if("batchAccount".equals(operationName)) {
         	
         	List l = (List)exchange.getIn().getBody();
-        	Account account = new Account();
-        	account.setAccountID("100000");
-        	account.setName((String)l.get(0));
+        	//Account account = new Account();
+        	//account.setAccountID("100000");
+        	//account.setName((String)l.get(0));
+        	
+        	CanonicalAccountDetails canAccountDetails = new CanonicalAccountDetails();
+        	
+        	canAccountDetails.setFirstName((String)l.get(0));
+        	canAccountDetails.setGuid("100000");
         	
         	//Set the account body and headers back onto the body
-        	exchange.getOut().setBody(account);
+        	exchange.getOut().setBody(canAccountDetails);
         	exchange.getOut().setHeaders(exchange.getIn().getHeaders());
         }
 	

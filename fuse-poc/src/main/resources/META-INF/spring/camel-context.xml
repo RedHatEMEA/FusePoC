@@ -337,7 +337,7 @@
 		<!--  Batch account create Route       -->
 		<!--  ******************************  -->	
 		<route>
-	        <from uri="file:////home/gcolman/RedHat/Accounts/telegraph/poc/batch?delete=true&amp;consumer.delay=10000" />	
+	        <from uri="file:src/data?delete=true&amp;consumer.delay=10000" />	
 	        <log message="FROM CSV ${body}"/>
 	        <unmarshal><csv /></unmarshal>
 	        <split>
