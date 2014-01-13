@@ -241,7 +241,7 @@
   	    	        <wireTap uri="direct:dummyAccountUpdate"/>
   	    	        <process ref="updateAccount"/>
 		        	<to uri="cxf:bean:account?dataFormat=POJO"/>
-		        	<marshal ref="xstream"/>>
+		        	<marshal ref="xstream"/>
 	            </when>
 	            <otherwise>
 	            	<log message="Request unavailable"/>           	
