@@ -45,6 +45,7 @@
 	<modules>
 		<module>fuse-poc</module>
 		<module>fuse-poc-features</module>
+		<module>fuse-poc-offline-repo</module>
 	</modules>
 
 	<repositories>

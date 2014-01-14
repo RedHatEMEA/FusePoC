@@ -6,7 +6,12 @@ sleep 500
 profile-create --parents camel fuse-poc
 profile-edit -r mvn:com.mycompany/fuse-poc-features/${project.version}/xml/features fuse-poc 
 profile-edit --features fuse-poc-feature fuse-poc
- 
+
+# hawtio - to be removed when Fuse 6.1 released
+fabric:profile-edit --delete --repositories mvn:io.hawt/hawtio-karaf/1.0/xml/features fuse-poc
+fabric:profile-edit --repositories mvn:io.hawt/hawtio-karaf/${hawtio.version}/xml/features fuse-poc 
+fabric:profile-edit --pid org.ops4j.pax.web/org.osgi.service.http.port=8010 fuse-poc 
+
 container-create-child --profile fuse-poc root container1
 
 

@@ -32,6 +32,7 @@
 		<feature dependency="true">camel-spring</feature>
 		<feature dependency="true">activemq-camel</feature>
 		<feature dependency="true">spring-jdbc</feature>
+		<feature dependency="true">hawtio</feature>
 		<bundle>mvn:commons-pool/commons-pool/${commons-pool.version}</bundle>
 		<bundle>mvn:commons-dbcp/commons-dbcp/${commons-dbcp.version}</bundle>
 		<bundle>mvn:org.apache.derby/derby/${derby.version}</bundle>
