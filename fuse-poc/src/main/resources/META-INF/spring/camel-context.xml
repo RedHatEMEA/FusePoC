@@ -33,6 +33,7 @@
   </bean>
 
   <!--  *************************  -->
+	<jdbc:embedded-database id="dataSource" type="DERBY">
 	<!--  CXF Endpoint Configuration -->
 	<!--  *************************  -->	    
   	<cxf:cxfEndpoint id="account"
