@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<features name="fuse-basic-features">
+
+	<repository>mvn:org.apache.camel.karaf/apache-camel/${camel.version}/xml/features
+	</repository>
+	<repository>mvn:org.apache.camel.karaf/apache-camel/2.10.4/xml/features
+	</repository>
+	<repository>mvn:org.apache.activemq/activemq-karaf/${activemq.version}/xml/features
+	</repository>
+	<repository>mvn:org.apache.karaf.assemblies.features/enterprise/${karaf.version}/xml/features
+	</repository>
+	<repository>mvn:org.apache.karaf.assemblies.features/standard/${karaf.version}/xml/features
+	</repository>
+	<repository>mvn:org.fusesource.fabric/fuse-fabric/${fuse-esb.version}/xml/features
+	</repository>
+	<repository>mvn:org.apache.cxf.karaf/apache-cxf/${cxf.version}/xml/features
+	</repository>
+	<repository>mvn:io.hawt/hawtio-karaf/${hawtio.version}/xml/features
+	</repository> 
+
+	<feature name="fuse-poc-feature" version="${project.version}"
+		resolver="(obr)">
+		<feature dependency="true">mq-fabric</feature>
+		<feature dependency="true">camel-core</feature>
+		<feature dependency="true">camel-xstream</feature>
+		<feature dependency="true">camel-http</feature>
+		<feature dependency="true">camel-cxf</feature>
+		<feature dependency="true">camel-jaxb</feature>
+		<feature dependency="true">camel-jdbc</feature>
+		<feature dependency="true">camel-csv</feature>
+		<feature dependency="true">camel-cxf</feature>
+		<feature dependency="true">camel-spring</feature>
+		<feature dependency="true">activemq-camel</feature>
+		<feature dependency="true">spring-jdbc</feature>
+		<bundle>mvn:commons-pool/commons-pool/${commons-pool.version}</bundle>
+		<bundle>mvn:commons-dbcp/commons-dbcp/${commons-dbcp.version}</bundle>
+		<bundle>mvn:org.apache.derby/derby/${derby.version}</bundle>
+		<bundle>mvn:com.mycompany/fuse-poc/${project.version}</bundle>
+	</feature>
+
+</features>
