@@ -61,7 +61,7 @@
 									<type>karaf</type>
 									<classifier>create</classifier>
 									<overWrite>true</overWrite>
-									<outputDirectory>target/features-repo/mycompany/fuse-poc-features/${project.version}</outputDirectory>
+									<outputDirectory>target/features-repo/com/mycompany/fuse-poc-features/${project.version}</outputDirectory>
 								</artifactItem>
 								<artifactItem>
 									<groupId>com.mycompany</groupId>
@@ -70,7 +70,7 @@
 									<type>karaf</type>
 									<classifier>recreate</classifier>
 									<overWrite>true</overWrite>
-									<outputDirectory>target/features-repo/mycompany/fuse-poc-features/${project.version}</outputDirectory>
+									<outputDirectory>target/features-repo/com/mycompany/fuse-poc-features/${project.version}</outputDirectory>
 								</artifactItem>
 							</artifactItems>
 							<!-- other configurations here -->
