@@ -1,5 +1,3 @@
-fabric:create --clean
-sleep 10000
 
 profile-create --parents camel fuse-poc
 profile-edit -r mvn:com.mycompany/fuse-poc-features/${project.version}/xml/features fuse-poc 
