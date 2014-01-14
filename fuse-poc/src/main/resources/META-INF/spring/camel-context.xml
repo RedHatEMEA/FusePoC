@@ -7,18 +7,32 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 							http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd
 							http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
-							http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-3.0.xsd">
+							http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd">
 
 	<!--  *************************  -->
 	<!--  JDBC Configuration	     -->
 	<!--  *************************  -->	
 
-	<jdbc:embedded-database id="dataSource" type="DERBY">
-        <jdbc:script location="classpath:sql/init.sql"/>
-    </jdbc:embedded-database>
-    
-    
-	<!--  *************************  -->
+	<!--<jdbc:embedded-database id="dataSource" type="DERBY">-->
+        <!--<jdbc:script location="classpath:sql/init.sql"/>-->
+    <!--</jdbc:embedded-database>-->
+
+  <!-- bean which creates/destroys the database table for this example -->
+  <bean id="initDatabase" class="com.tmg.fuse.poc.DatabaseBean"
+        init-method="create" destroy-method="destroy">
+    <property name="dataSource" ref="dataSource"/>
+    <property name="location" value="sql/init.sq"/>
+  </bean>
+
+  <!-- this is the JDBC data source which uses an in-memory only Apache Derby database -->
+  <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+    <property name="driverClassName" value="org.apache.derby.jdbc.EmbeddedDriver"/>
+    <property name="url" value="jdbc:derby:memory:fuse-poc;create=true"/>
+    <property name="username" value=""/>
+    <property name="password" value=""/>
+  </bean>
+
+  <!--  *************************  -->
 	<!--  CXF Endpoint Configuration -->
 	<!--  *************************  -->	    
   	<cxf:cxfEndpoint id="account"
@@ -82,10 +96,13 @@
 	  <property name="connectionFactory" ref="jmsConnectionFactory" />
 	 </bean> 
 	
-	<bean id="jmsConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory"> 
-	  <property name="brokerURL" value="vm:tmgAMQBroker" /> 
+	<bean id="jmsConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
+    <!-- here you define the name of the broker, by default the broker is named amq in JBoss Fuse -->
+	  <property name="brokerURL" value="vm:amq" />
 	  <property name="watchTopicAdvisories" value="false" />
 	  <property name="redeliveryPolicy" ref="jmsRedeliverPolicy"/>
+	  <property name="userName" value="admin"/>
+	  <property name="password" value="admin"/>
 	</bean>
 
 	<bean id="jmsRedeliverPolicy" class="org.apache.activemq.RedeliveryPolicy">
@@ -101,7 +118,7 @@
 	<!--  Set up Error Handlers -->
 	<!--  ************************* -->	
 	<bean id="accountTopicErrorHandler" class="org.apache.camel.builder.DeadLetterChannelBuilder">
-       <property name="deadLetterUri" value="activemq:accountTopicDLQ"/>
+       <property name="deadLetterUri" value="activemqx:accountTopicDLQ"/>
        <property name="redeliveryPolicy" ref="accountTopicRedeliveryPolicyConfig"/>
    </bean>
  
@@ -253,7 +270,7 @@
 
 		<!-- Error route for account route  --> 
 		<route id="accountError">
-			<from uri="activemq:accountTopicDLQ"/>
+			<from uri="activemqx:accountTopicDLQ"/>
 			<log message="MESSAGE READ FROM accountTopicDLQ ERROR QUEUE ${body}" />
 		</route>
 
