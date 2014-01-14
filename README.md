@@ -19,16 +19,19 @@ Not using Vagrant
 1. Uncomment the admin user in user.properties under $FUSE_HOME/etc
 
 2. Ensure running from a fresh Fuse install by deleting 
-	$FUSE_HOME/data
-	$FUSE_HOME/instances
+
+>	$FUSE_HOME/data
+>	$FUSE_HOME/instances
 	
 3. Launch Fuse $FUSE_HOME/bin/fuse
 
 4. To create from scratch run the following
-	source mvn:com.mycompany/fuse-poc-features/1.0.0-SNAPSHOT/karaf/create
+
+>	source mvn:com.mycompany/fuse-poc-features/1.0.0-SNAPSHOT/karaf/create
 	
 5. To recreate the container and profile run
-	source mvn:com.mycompany/fuse-poc-features/1.0.0-SNAPSHOT/karaf/recreate
+
+>	source mvn:com.mycompany/fuse-poc-features/1.0.0-SNAPSHOT/karaf/recreate
 
 
 
