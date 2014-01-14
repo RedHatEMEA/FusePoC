@@ -13,6 +13,7 @@
 	<!--  JDBC Configuration	     -->
 	<!--  *************************  -->	
 
+
 	<!--<jdbc:embedded-database id="dataSource" type="DERBY">-->
         <!--<jdbc:script location="classpath:sql/init.sql"/>-->
     <!--</jdbc:embedded-database>-->
@@ -33,7 +34,6 @@
   </bean>
 
   <!--  *************************  -->
-	<jdbc:embedded-database id="dataSource" type="DERBY">
 	<!--  CXF Endpoint Configuration -->
 	<!--  *************************  -->	    
   	<cxf:cxfEndpoint id="account"
@@ -210,6 +210,9 @@
 		<dataFormats>
 		    <json id="accountDetailsFormat" unmarshalTypeName="com.tmg.fuse.poc.account.AccountDetails"/>
 		    <json id="legacyAccountDetailsFormat" unmarshalTypeName="com.tmg.fuse.poc.account.legacy.AccountDetails"/>
+		    
+		    
+		    
 		</dataFormats>
 	   
 
@@ -259,7 +262,8 @@
   	    	        <wireTap uri="direct:dummyAccountUpdate"/>
   	    	        <process ref="updateAccount"/>
 		        	<to uri="cxf:bean:account?dataFormat=POJO"/>
-		        	<marshal ref="xstream"/>
+<!-- 		        	JR -->
+<!-- 		        	<marshal ref="xstream"/> -->
 	            </when>
 	            <otherwise>
 	            	<log message="Request unavailable"/>           	
