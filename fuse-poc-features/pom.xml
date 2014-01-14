@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.mycompany</groupId>
+		<version>1.0.0-SNAPSHOT</version>
+		<artifactId>FusePoC</artifactId>
+	</parent>
+	<artifactId>fuse-poc-features</artifactId>
+	<name>Fuse Poc Feature Repository</name>
+	<build>
+		<resources>
+			<resource>
+				<filtering>true</filtering>
+				<directory>src/main/resources</directory>
+			</resource>
+		</resources>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>1.8</version>
+				<executions>
+					<execution>
+						<id>attach-artifacts</id>
+						<goals>
+							<goal>attach-artifact</goal>
+						</goals>
+						<phase>package</phase>
+						<configuration>
+							<artifacts>
+								<artifact>
+									<file>target/classes/fuse-poc-features.xml</file>
+									<type>xml</type>
+									<classifier>features</classifier>
+								</artifact>
+								<artifact>
+									<file>target/classes/fuse-poc-create.karaf</file>
+									<type>karaf</type>
+									<classifier>create</classifier>
+								</artifact>
+								<artifact>
+									<file>target/classes/fuse-poc-recreate.karaf</file>
+									<type>karaf</type>
+									<classifier>recreate</classifier>
+								</artifact>
+							</artifacts>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>
