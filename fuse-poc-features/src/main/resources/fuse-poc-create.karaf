@@ -1,5 +1,3 @@
-
-fabric:profile-edit --pid org.fusesource.fabric.agent/org.ops4j.pax.url.mvn.repositories='file:/home/ec2-usr/features-repo@snapshots@id=poc' default
 profile-create --parents camel fuse-poc
 profile-edit -r mvn:com.mycompany/fuse-poc-features/${project.version}/xml/features fuse-poc 
 profile-edit --features fuse-poc-feature fuse-poc 

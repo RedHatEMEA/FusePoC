@@ -22,6 +22,7 @@ public class UpdateAccountAggregationStrategy implements AggregationStrategy {
 
 		
 		List<Map<String, Object>> data = (List<Map<String, Object>>)resource.getIn().getBody();
+		System.out.println("**************************" + data.getClass());
 		Map<String, Object> row = data.get(0);
 		String xrefId = row.get("XREFID").toString();
 		String name = row.get("NAME").toString();

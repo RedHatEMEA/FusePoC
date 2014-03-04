@@ -1,15 +1,17 @@
 #!/usr/bin/env bash
 
-echo "update Fedora"
-yum -y update
 
 echo "install Java 1.7"
-yum -y install java-1.7.0-openjdk java-1.7.0-openjdk-devel
 
-set JAVA_HOME=/usr/lib/jvm/java-1.7.0-openjdk
+yum -y install java-1.7.0-openjdk-devel
 
-echo "install 7zip"
-yum -y install p7zip
+echo "install unzip"
+yum -y install unzip
+
+echo "install maven"
+wget http://mirrors.gigenet.com/apache/maven/maven-3/3.0.5/binaries/apache-maven-3.0.5-bin.tar.gz
+su -c "tar -zxvf apache-maven-3.0.5-bin.tar.gz -C /opt/" 
+export PATH=/opt/apache-maven-3.0.5:/opt/apache-maven-3.0.5/bin:$PATH
 
 FUSEINSTALL=jboss-fuse-full-6.0.0.redhat-024
 
@@ -21,22 +23,26 @@ then
 	echo "File $FUSEINSTALL.zip exists"
 else
 	echo "File $FUSEINSTALL.zip does not exists"
-	exec wget http://download.jboss.org/jbossfuse/6.1.0.Alpha1/$FUSEINSTALL.zip
 fi
 
 echo "unzip the Fuse distribution" 
-7za x $FUSEINSTALL.zip -aoa
+unzip -o -q $FUSEINSTALL.zip
 
 echo "copy the user.properties into Fuse"
+cd /vagrant
 cp users.properties jboss-fuse-6.0.0.redhat-024/etc
 
-echo "launch Fuse"
-#jboss-fuse-6.0.0.redhat-024/bin/fuse
+echo "build the PoC"
+mvn clean
+mvn install
 
-echo "create the Fabric"
+#echo "launch Fuse"
+#jboss-fuse-6.0.0.redhat-024/bin/start
+
+#echo "create the Fabric"
 #fabric:create
 
-echo "add the Management Console"
+#echo "add the Management Console"
 #profile-edit --features fabric-webui fabric
 
 

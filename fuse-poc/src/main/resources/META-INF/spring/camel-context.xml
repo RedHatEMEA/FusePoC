@@ -171,6 +171,7 @@
   	<bean id="updateAccount" class="com.tmg.fuse.poc.UpdateAccountprocessor"/>
   	<bean id="pspCreateAccount" class="com.tmg.fuse.poc.PSPCreateAccountProcessor"/>
   	<bean id="accountDetailsProcessor" class="com.tmg.fuse.poc.AccountDetailsProcessor"/>
+  	<bean id="resultProcessor" class="com.tmg.fuse.poc.ResultProcessor"/>
   	<bean id="legacyAccountDetailsProcessor" class="com.tmg.fuse.poc.LegacyAccountDetailsProcessor"/>
     <bean id="accountprocessor" class="com.tmg.fuse.poc.AccountProcessor"/>
 	<bean id="guidEnrichStrategy" class="com.tmg.fuse.poc.GUIDAggregationStrategy"/>
@@ -235,16 +236,16 @@
 	        		<enrich uri="jdbc:dataSource"/>
                		<to uri="bean:retrieveAccount"/>
                		<log message="Calling CRM service"/>
-               		  
+               		   
                		<to uri="cxf:bean:account?dataFormat=POJO"/>
                		<to uri="bean:accountDetailsProcessor"/>
                		<marshal ref="accountDetailsFormat"/>
-               		
-               		<!-- 
+               		 
+               		 <!-- 
                		<to uri="cxf:bean:legacyaccount?dataFormat=POJO"/>
                		<to uri="bean:legacyAccountDetailsProcessor"/>
                		<marshal ref="legacyAccountDetailsFormat"/>
-               		 -->
+               		  -->
                    </when>                  
            	    <when>	
                		<simple>${in.header.operationName} == 'createAccount'</simple>
@@ -262,8 +263,9 @@
   	    	        <wireTap uri="direct:dummyAccountUpdate"/>
   	    	        <process ref="updateAccount"/>
 		        	<to uri="cxf:bean:account?dataFormat=POJO"/>
-<!-- 		        	JR -->
-<!-- 		        	<marshal ref="xstream"/> -->
+		        	
+		        	<to uri="bean:resultProcessor"/>
+		        	<marshal ref="xstream"/>
 	            </when>
 	            <otherwise>
 	            	<log message="Request unavailable"/>           	

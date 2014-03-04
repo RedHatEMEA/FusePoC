@@ -71,7 +71,9 @@ public class AccountEndpointService implements AccountServicePortType {
 	public Result updateAccount(AccountDetails accountDetails) {
 		// TODO Auto-generated method stub
 		System.out.println("[[UPDATE ACCOUNT] - Set account.name =" +accountDetails.getFirstName() +"]" );
-		return null;
+		
+		return new Result();
+		//return null;
 	}
 
 	@Override
