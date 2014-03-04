@@ -9,9 +9,9 @@ echo "install unzip"
 yum -y install unzip
 
 echo "install maven"
-wget http://mirrors.gigenet.com/apache/maven/maven-3/3.0.5/binaries/apache-maven-3.0.5-bin.tar.gz
-su -c "tar -zxvf apache-maven-3.0.5-bin.tar.gz -C /opt/" 
-export PATH=/opt/apache-maven-3.0.5:/opt/apache-maven-3.0.5/bin:$PATH
+wget http://mirrors.gigenet.com/apache/maven/maven-3/3.2.1/binaries/apache-maven-3.2.1-bin.tar.gz
+su -c "tar -zxvf apache-maven-3.2.1-bin.tar.gz -C /opt/" 
+export PATH=/opt/apache-maven-3.2.1:/opt/apache-maven-3.2.1/bin:$PATH
 
 FUSEINSTALL=jboss-fuse-full-6.0.0.redhat-024
 
