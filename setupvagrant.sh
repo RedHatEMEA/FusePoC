@@ -23,6 +23,7 @@ then
 	echo "File $FUSEINSTALL.zip exists"
 else
 	echo "File $FUSEINSTALL.zip does not exists"
+	exit
 fi
 
 echo "unzip the Fuse distribution" 
@@ -35,14 +36,5 @@ cp users.properties jboss-fuse-6.0.0.redhat-024/etc
 echo "build the PoC"
 mvn clean
 mvn install
-
-#echo "launch Fuse"
-#jboss-fuse-6.0.0.redhat-024/bin/start
-
-#echo "create the Fabric"
-#fabric:create
-
-#echo "add the Management Console"
-#profile-edit --features fabric-webui fabric
 
 

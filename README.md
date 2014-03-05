@@ -29,13 +29,19 @@ FusePoC
 
 > fabric:create --clean
 
-- Tell the fabric about the offline Maven repo
+- Wait for 30 seconds and then modify the fabric profile
 
 > fabric:profile-edit --pid org.fusesource.fabric.agent/org.ops4j.pax.url.mvn.repositories='file:///vagrant/fuse-poc-offline-repo/target/features-repo@snapshots@id=poc' default
 
 - Run the Karaf script to deploy the PoC
 
-> source mvn:com.mycompany/fuse-poc-features/1.0.0-SNAPSHOT/karaf/fuse-poc-create
+> source mvn:com.mycompany/fuse-poc-features/1.0.0-SNAPSHOT/karaf/create
+
+- Check the new container has started up successfully. Run the following command and check container1 status is success
+
+> container-list
+
+- Test the camel route. Browse to http://192.168.33.10:9090/route/accountservice/account/1234 and you should get a JSON response
 
 
 Not using Vagrant
