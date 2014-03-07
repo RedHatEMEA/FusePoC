@@ -14,3 +14,16 @@ camel-java
 camel-spring
 Servers
 /fuse-poc-offline-repo/target
+
+# vim swap files
+*.swp
+*.swo
+
+# our newly created fuse directory
+/jboss-fuse-6.0.0.redhat-024/*
+
+# our features directory
+/fuse-poc-features/*
+
+# the .zip for fuse
+jboss-fuse-full-6.0.0.redhat-024.zip
