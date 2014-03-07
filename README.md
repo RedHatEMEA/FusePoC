@@ -41,7 +41,7 @@ FusePoC
 
 > container-list
 
-- Test the camel route. Browse to http://192.168.33.10:9090/route/accountservice/account/1234 and you should get a JSON response
+- Test the camel route. Browse to http://localhost:9090/route/accountservice/account/1234 and you should get a JSON response
 
 
 Not using Vagrant
