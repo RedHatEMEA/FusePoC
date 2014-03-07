@@ -9,8 +9,11 @@ echo "install unzip"
 yum -y install unzip
 
 echo "install maven"
+# TODO install maven using yum?
 wget http://mirrors.gigenet.com/apache/maven/maven-3/3.2.1/binaries/apache-maven-3.2.1-bin.tar.gz
 su -c "tar -zxvf apache-maven-3.2.1-bin.tar.gz -C /opt/" 
+
+# TODO - put this in the path for when someone ssh's into the box - this is only a hack for login at the moment.
 export PATH=/opt/apache-maven-3.2.1:/opt/apache-maven-3.2.1/bin:$PATH
 
 FUSEINSTALL=jboss-fuse-full-6.0.0.redhat-024
