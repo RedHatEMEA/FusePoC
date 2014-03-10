@@ -31,7 +31,7 @@ cd /vagrant
 cp users.properties runtime/jboss-fuse-6.0.0.redhat-024/etc
 
 echo "build the PoC"
-mvn clean
-mvn install
+sudo -u vagrant mvn clean
+sudo -u vagrant mvn install
 
 
