@@ -2,7 +2,7 @@ FusePoC
 =======
 
 - Clone this repository
-- Download jboss-fuse-full-6.0.0.redhat-024.zip and save in the main directory of this repository. Don't worry about unzipping it.
+- Download jboss-fuse-full-6.0.0.redhat-024.zip from access.redhat.com and save in the dist directory of this repository. Don't worry about unzipping it.
 - Install Vagrant - http://www.vagrantup.com/
 - At the command line go to the main directory of this repository and then type:
 
@@ -15,7 +15,7 @@ FusePoC
 - You will now be ssh'ed into your vm
 - Change to the Fuse bin directory
 
-> cd /vagrant/jboss-fuse-6.0.0.redhat-024/bin
+> cd /vagrant/runtime/jboss-fuse-6.0.0.redhat-024/bin
 
 - Start Fuse
 
@@ -41,7 +41,7 @@ FusePoC
 
 > container-list
 
-- Test the camel route. Browse to http://192.168.33.10:9090/route/accountservice/account/1234 and you should get a JSON response
+- You will have to wait a bit for everything to get up and running then test the camel route. Browse to http://localhost:9090/route/accountservice/account/1234 and you should get a JSON response
 
 
 Not using Vagrant
