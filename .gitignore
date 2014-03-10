@@ -20,10 +20,11 @@ Servers
 *.swo
 
 # our newly created fuse directory
-/jboss-fuse-6.0.0.redhat-024/*
+/runtime/jboss-fuse-6.0.0.redhat-024/*
 
-# our features directory
-/fuse-poc-features/*
+# target directorys
+/fuse-poc-features/target/*
+/fuse-poc-offline-repo/target/*
 
 # the .zip for fuse
 jboss-fuse-full-6.0.0.redhat-024.zip
