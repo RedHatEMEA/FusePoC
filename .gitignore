@@ -27,4 +27,4 @@ Servers
 /fuse-poc-offline-repo/target/*
 
 # the .zip for fuse
-jboss-fuse-full-6.0.0.redhat-024.zip
+dist/jboss-fuse-full-6.0.0.redhat-024.zip
